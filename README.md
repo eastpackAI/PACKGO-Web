@@ -38,6 +38,12 @@ pnpm dev
 > 说明：GitHub Pages 的项目站点部署在子路径 `/<仓库名>/` 下，所以静态导出必须带
 > `NEXT_PUBLIC_BASE_PATH`；CI 里已自动传入，不用手写。
 
+> 防呆门禁：发布流程在静态导出后会校验 `out/index.html` 里的资源地址是否带 `/<仓库名>/_next/` 前缀，
+> 不带就让发布失败 —— 这条是踩过坑加的，**不要删**。
+
+发布与排障的完整步骤（含首次接通仓库、线上没样式、资源 404 的排查顺序）见技能
+`packgo-web-publish`（`~/.codex/skills/packgo-web-publish/SKILL.md`）。
+
 ## 质量检查
 
 ```bash
@@ -48,4 +54,6 @@ pnpm build
 
 ## 当前边界
 
-本工程只有前端框架与占位内容；不连接真实后端、AI API、数据库、登录、报价、RFQ（询价请求）或外部部署。
+本工程只有前端框架与占位内容；不连接真实后端、AI API、数据库、登录、报价、RFQ（询价请求）。
+**已发布到公网预览（GitHub Pages，见上）**：授权范围只限网站工程本身，工作区其他内容不对外公开。
+不要绑定或修改 `eastpacksolutions.com` 及其 DNS。

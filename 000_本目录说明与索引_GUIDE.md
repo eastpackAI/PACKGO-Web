@@ -31,6 +31,34 @@
 - Three.js、重型 WebGL、游戏引擎或与框架验证无关的大型依赖。
 - Secret（秘密凭证）、Token（令牌）、API Key（接口密钥）、`.env` 或内部服务凭证。
 
+## 对外预览与发布通道（2026-09-21 起生效，Owner 已授权）
+
+> **上一条"禁止任何公网部署"已被 Owner 在 2026-09-21 明确授权取代**：授权范围**仅限这两个网站工程本身**
+> 发布到公网预览；工作区其他内容（数据库、服务、内部文档、客户与供应商资料）**仍不得对外公开**。
+
+| 项 | 值 |
+|---|---|
+| 公网预览网址 | https://eastpackai.github.io/PACKGO-Web/ |
+| 代码仓库 | https://github.com/eastpackAI/PACKGO-Web （**公开**；GitHub 免费套餐下私有仓库不能用 Pages） |
+| 分支 | `main` = 正式基线；`develop` = 预览（Pages 只跟 `develop`，推上去即自动发布） |
+| 自动发布配置 | `.github/workflows/deploy-pages.yml`（含 lint / typecheck / 静态导出 / **资源前缀校验**） |
+| 本机手动导出预览包 | `STATIC_EXPORT=1 NEXT_PUBLIC_BASE_PATH=/PACKGO-Web pnpm build:static` |
+| 发布与排障技能 | `packgo-web-publish`（`~/.codex/skills/packgo-web-publish/SKILL.md`） |
+
+三条硬约束（漏一条线上就坏）：项目站点必须有 `basePath = /<仓库名>`；`next/image` 关优化时
+**不会**自动补前缀（用 `config/spatial.ts` 的 `assetPath()`）；必须产出 `out/.nojekyll`。
+CI 里已加"发布前校验资源地址带子路径前缀"的门禁，**不得删除**。
+
+**边界**：不得绑定或修改 `eastpacksolutions.com` 及其 DNS（那是 Owner 现有站点）；
+不得把整个工作区仓库推上 GitHub。
+
+## 标准视图合并（2026-09-21）
+
+网站 2（`PACKGO-Web-2`）的 Cubit 风格首页已合并进本站的 **Standard View（标准视图）**首页；
+行业深链 `/solutions/...` 的标准视图仍用原 `StandardJourneyView`。
+合并进来的样式全部限定在 `.standard-home` 容器内（`styles/standard-home.css`），**空间视图零影响**。
+首页不再叠加常驻 `PackyPanel`（新首页自带 Packy 专区）。详见 `PACKGO-Web/AGENTS.md` 与 README。
+
 ## 当前索引
 
 - `app/`：根页面、全局布局、Metadata（页面元数据）与 `/solutions/[slug]` 静态深链路由。
