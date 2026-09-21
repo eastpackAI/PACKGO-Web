@@ -12,6 +12,32 @@ pnpm dev
 
 默认访问 `http://localhost:3000`。
 
+## 在线预览（云地审核通道）
+
+**固定预览网址：** https://eastpackai.github.io/PACKGO-Web/
+
+这个网址给 Owner 和云端 ChatGPT 用来审核当前版本，**不需要本机开着服务**。
+
+链路（已跑通）：
+
+```text
+本地改代码 → lint / typecheck / build
+   → git commit → git push develop
+   → GitHub Actions 自动构建（含静态导出）
+   → 自动发布到 GitHub Pages
+   → 网址自动更新为最新版本
+```
+
+| 项 | 值 |
+|---|---|
+| 代码仓库（私有变公开） | https://github.com/eastpackAI/PACKGO-Web |
+| 分支 | `main` = 正式基线；`develop` = 预览（自动发布监听此分支） |
+| 自动发布配置 | `.github/workflows/deploy-pages.yml` |
+| 本地手动生成预览包 | `STATIC_EXPORT=1 NEXT_PUBLIC_BASE_PATH=/PACKGO-Web pnpm build:static` |
+
+> 说明：GitHub Pages 的项目站点部署在子路径 `/<仓库名>/` 下，所以静态导出必须带
+> `NEXT_PUBLIC_BASE_PATH`；CI 里已自动传入，不用手写。
+
 ## 质量检查
 
 ```bash
