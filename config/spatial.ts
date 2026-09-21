@@ -21,27 +21,37 @@ import type {
  * 所有演示文本都带 `Placeholder` 说明，等正式内容核对后再替换。
  */
 
+/**
+ * 部署子路径前缀。
+ *
+ * GitHub Pages 的「项目站点」把网站放在 `/<仓库名>/` 子路径下，而 `next/image`
+ * 在关闭图片优化（静态导出必须关闭）时**不会自动补这个前缀**，图片会 404。
+ * 所以这里显式拼接：本地开发与普通构建时该值为空，行为完全不变。
+ */
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const assetPath = (path: string) => `${BASE_PATH}${path}`;
+
 const PACKAGING_VISUALS: Record<IndustryId, { src: string; alt: string }> = {
   coffee: {
-    src: "/placeholders/spatial-packaging/coffee-pouch.webp",
+    src: assetPath("/placeholders/spatial-packaging/coffee-pouch.webp"),
     alt: "明亮工业空间中的定制咖啡袋效果预览",
   },
   cosmetics: {
-    src: "/placeholders/spatial-packaging/cosmetics-carton.webp",
+    src: assetPath("/placeholders/spatial-packaging/cosmetics-carton.webp"),
     alt: "定制化妆品纸盒与陈列包装效果预览",
   },
   food: {
-    src: "/placeholders/spatial-packaging/food-pouch.webp",
+    src: assetPath("/placeholders/spatial-packaging/food-pouch.webp"),
     alt: "定制食品袋与纸板包装效果预览",
   },
   "daily-care": {
-    src: "/placeholders/spatial-packaging/daily-care-refill.webp",
+    src: assetPath("/placeholders/spatial-packaging/daily-care-refill.webp"),
     alt: "定制日化补充装与纸盒效果预览",
   },
 };
 
 const PACKGO_COLLECTION_VISUAL = {
-  src: "/placeholders/spatial-packaging/packgo-packaging-collection.webp",
+  src: assetPath("/placeholders/spatial-packaging/packgo-packaging-collection.webp"),
   alt: "PACKGO 定制包装系列效果预览",
 };
 
