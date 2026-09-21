@@ -1,0 +1,80 @@
+name: 预览发布（GitHub Pages）
+
+# 触发条件：向 develop 推送（或手动触发）
+# 说明：这就是"本地改代码 → push develop → 自动构建 → 自动发布"的自动链路。
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+# GitHub Pages 发布所需的最小权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个发布，新的推送取消旧的
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取出代码
+        uses: actions/checkout@v4
+
+      # 本工程用 pnpm 管理依赖（本地没有 pnpm 也能用，CI 里自动装）
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      # 与本地同一套门禁：不通过就不发布
+      - name: 代码检查 lint
+        run: pnpm lint
+
+      - name: 类型检查 typecheck
+        run: pnpm typecheck
+
+      - name: 静态导出（带 Pages 子路径）
+        env:
+          STATIC_EXPORT: "1"
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+        run: pnpm build:static
+
+      # 少了这个文件，GitHub Pages 的 Jekyll 会忽略 _next 目录
+      - name: 关闭 Jekyll
+        run: |
+          touch out/.nojekyll
+          # 剔除仓库内部的目录说明文件（不进公开站点）
+          find out -name '000_*.md' -delete
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传站点产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
