@@ -38,9 +38,10 @@
 
 | 项 | 值 |
 |---|---|
-| 公网预览网址 | https://eastpackai.github.io/PACKGO-Web/ |
+| 首选公网预览网址 | https://paleturquoise-rail-229107.hostingersite.com/ （Hostinger GitHub 自动部署，`develop`） |
+| 备用静态预览网址 | https://eastpackai.github.io/PACKGO-Web/ （GitHub Pages） |
 | 代码仓库 | https://github.com/eastpackAI/PACKGO-Web （**公开**；GitHub 免费套餐下私有仓库不能用 Pages） |
-| 分支 | `main` = 正式基线；`develop` = 预览（Pages 只跟 `develop`，推上去即自动发布） |
+| 分支 | `main` = 正式基线；`develop` = 预览（Hostinger 与 Pages 均监听 `develop`） |
 | 自动发布配置 | `.github/workflows/deploy-pages.yml`（含 lint / typecheck / 静态导出 / **资源前缀校验**） |
 | 本机手动导出预览包 | `STATIC_EXPORT=1 NEXT_PUBLIC_BASE_PATH=/PACKGO-Web pnpm build:static` |
 | 发布与排障技能 | `packgo-web-publish`（`~/.codex/skills/packgo-web-publish/SKILL.md`） |
