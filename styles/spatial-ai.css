@@ -690,6 +690,10 @@
   gap: 0.55rem;
   overflow: hidden;
   border-left: 1px solid rgba(31, 95, 169, 0.34);
+  /* 面板本身是"浅色玻璃"（下面那层近白底），所以墨色必须是深的。
+     不写这一行，标题与上下文值会继承外层（空间视图）的近白墨，
+     落在浅色面板上就等于白底白字 —— 2026-09-23 Owner 反馈黑条时一并暴露。 */
+  color: #1b2733;
   /* 半透明 + 背景模糊：面板后面的页面仍然看得见（Owner 要求） */
   background:
     radial-gradient(circle at 12% 2%, rgba(31, 95, 169, 0.12), transparent 32%),

@@ -1,5 +1,10 @@
 # home 目录说明与索引（标准视图首页栏目）
 
+> 📤 **对外快照机制（自动校验，勿删）**：本目录的对外现状投影走「系统快照」——机制正本在交互中心
+> `050_交互_INTERACTION/007_云地交互与信箱/系统快照机制_v1.md`，本机同步副本
+> `docs/system-snapshot-mechanism.md`，生成命令 `./tools/aiw-snapshot`；
+> 本句由 `./tools/check-guides` 强制校验，删掉即审计失败。
+
 本目录保存标准视图首页的栏目组件：内容全部来自 `config/standardHome.ts`，
 样式全部限制在 `.standard-home` 作用域内（`styles/standard-home.css`）。
 它承接 `PACKGO-Web-2`（网站 2）最新首页的视觉与栏目节奏，但**不**承接网站 2 的总导航与独立聊天会话。

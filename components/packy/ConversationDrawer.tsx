@@ -30,6 +30,7 @@ export function ConversationDrawer() {
   const isOpen = conversationVisibility === "open";
   const industry = getIndustryById(selectedIndustry);
   const inputRef = useRef<HTMLInputElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -55,6 +56,29 @@ export function ConversationDrawer() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [actions, isOpen]);
 
+  /**
+   * 未固定时：点击面板以外任何地方都收起（恢复原设计）。
+   * 三种情况不算"外面"：
+   * 1. 点击落在抽屉面板内部；
+   * 2. 点击落在 Packy 自己的页面控件上（"和 Packy 聊聊""问 Packy""打开完整对话"、底部常驻条等，
+   *    统一用 `data-packy-keep-open` 标记）—— 这些控件本来就会驱动 Packy，点它们顺手把面板关掉是反效果；
+   * 3. 已固定（`固定` 按钮按下）时，点外部不收起，面板留在原地。
+   */
+  useEffect(() => {
+    if (!isOpen || conversationPinned) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (drawerRef.current?.contains(target)) return;
+      if (target.closest("[data-packy-keep-open]")) return;
+      actions.closeConversation();
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => document.removeEventListener("pointerdown", onPointerDown, true);
+  }, [actions, conversationPinned, isOpen]);
+
   const submitLocalDraft = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!draft.trim()) return;
@@ -63,6 +87,7 @@ export function ConversationDrawer() {
 
   return (
     <aside
+      ref={drawerRef}
       className={`conversation-drawer${isOpen ? " is-open" : ""}${
         conversationPinned ? " is-pinned" : ""
       }`}

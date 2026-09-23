@@ -10,7 +10,9 @@
   position: relative;
   z-index: var(--z-header);
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) auto minmax(320px, 1fr);
+  /* 左右两列按 0.55 : 1.45 分配富余宽度：品牌块只需要 ~150px，
+     右侧要放「信任语 + 和 Packy 聊聊 + 视图切换 + 登录」四件，需要更宽。 */
+  grid-template-columns: minmax(180px, 0.55fr) auto minmax(340px, 1.45fr);
   align-items: center;
   gap: var(--space-5);
   min-height: 76px;
@@ -61,9 +63,11 @@
 .primary-nav {
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 2.4vw, 2.4rem);
+  /* 导航项从 3 条增加到 6 条（对齐网站 2 的信息架构），间距相应收窄 */
+  gap: clamp(0.7rem, 1.5vw, 1.5rem);
   color: var(--color-muted);
   font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .primary-nav a,
@@ -81,7 +85,35 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--space-4);
+  /* 页头右上角现在有 4 项（信任语 / 和 Packy 聊聊 / 视图切换 / 登录）；
+     间距略收窄，并对子项禁止压缩 —— 否则"视图切换"被挤窄后内部文字折行，
+     会把整个页头从 76px 撑到 112px，连带影响抽屉起点与首屏高度。 */
+  gap: 0.75rem;
+}
+
+.header-actions > * {
+  flex: 0 0 auto;
+}
+
+.view-mode-switch button,
+.view-mode-switch button span,
+.view-mode-switch button small {
+  white-space: nowrap;
+}
+
+/* 页头右上角的空间是"分级让位"的（实测 1440 下 6 项导航 + 信任语 + 视图切换 + CTA 会超出 1fr 列）：
+   窄一些的宽屏先收起信任语，再窄一些收起"登录"占位；导航本身在 ≤1220px 收起（既有规则）。
+   这样任何宽度下页头都保持单行 76px，不会把导航压住，也不会把首屏顶高。 */
+@media (max-width: 1400px) {
+  .header-tagline {
+    display: none;
+  }
+}
+
+@media (max-width: 1300px) {
+  .header-actions .future-link {
+    display: none;
+  }
 }
 
 .view-mode-switch {
@@ -123,22 +155,60 @@
   white-space: nowrap;
 }
 
+/* 页头右上角的信任语（来自网站 2 的页头文案） */
+.header-tagline {
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+/* 页头「和 Packy 聊聊」：两视图共用同一动作（打开共享 Packy 会话）。
+   注意不能直接用 `.btn`——那套只在标准视图作用域 `.standard-home` 内生效；
+   这里按视图给底色，保证在深色页头（标准视图）与浅色页头（空间视图）上都看得清。 */
+.header-packy {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--color-warm-white);
+  color: #14161a;
+  transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
+}
+
+.header-packy:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.view-spatial .header-packy {
+  background: #15161a;
+  color: var(--color-warm-white);
+}
+
 .app-body {
   display: flex;
   min-height: calc(100svh - 76px);
-  transition: padding-right 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Packy 完整对话打开时，页面给它让出右侧一条，而不是被盖住——
-   Owner 反馈"点出来之后点不到别的地方"。窄屏不挤（抽屉本来就占满）。 */
-.app-shell.conversation-open .app-body {
-  padding-right: min(400px, 92vw);
-}
+/* Packy 完整对话是**浮层**：直接盖在页面上方，**不再给页面让位**。
+   面板本身是半透明 + 背景模糊，后面的页面仍然看得见（更早的 Owner 要求）。
+   2026-09-23 晚 Owner 反馈："弹出时会挤压左边的网站，字体和界面都会晃动"——
+   原因是让位会让内容栏宽在 0.32s 内变化、文字重新折行；浮层不动布局，因此不再晃动。
+   之所以现在敢让它盖住页面：面板已支持「未固定时点面板外即收起」，
+   不会再出现"点出来之后点不到别的地方"（那是当初加让位的原因）。
+   注：打开时右侧约 400px 会被面板覆盖，这是浮层的预期代价；点面板外即可收起继续操作。 */
 
-@media (max-width: 900px) {
-  .app-shell.conversation-open .app-body {
-    padding-right: 0;
-  }
+/* 标准视图的外壳底色必须跟随标准视图的浅色画布（`.standard-home` 的 --bg = #faf8f4）。
+   默认的 `.app-shell` 底色是空间视图的深色画布（--color-canvas-deep）。
+   深色画布只属于空间视图，标准视图不继承它 —— 否则任何没有被内容块盖住的地方
+   （例如浮层面板上方那一列）都会露出近黑底。 */
+.app-shell.view-standard {
+  background: #faf8f4;
 }
 
 .main-experience {

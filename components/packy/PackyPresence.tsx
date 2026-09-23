@@ -37,8 +37,10 @@ export function PackyPresence() {
     if (conversationVisibility !== "open") actions.openConversation();
   };
 
+  // `data-packy-keep-open`：Packy 自己的常驻条不算"面板以外"，
+  // 在未固定状态下点它不该把刚打开的完整对话收起（2026-09-23）。
   return (
-    <section className="packy-presence" aria-label="Packy · 共享焦点包装助手">
+    <section className="packy-presence" data-packy-keep-open aria-label="Packy · 共享焦点包装助手">
       <div className="packy-presence__identity">
         <span className="packy-orb" aria-hidden="true">
           P

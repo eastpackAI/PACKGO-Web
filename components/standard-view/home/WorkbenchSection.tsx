@@ -377,6 +377,7 @@ export function WorkbenchSection({ id = "workbench", showWorkspaceLink = true }:
                   <button
                     type="button"
                     className="wb-ask"
+                    data-packy-keep-open
                     aria-label="问 Packy：材质层数怎么选"
                     onClick={() => specQuestion("材质层数")}
                   >
@@ -397,6 +398,7 @@ export function WorkbenchSection({ id = "workbench", showWorkspaceLink = true }:
                   <button
                     type="button"
                     className="wb-ask"
+                    data-packy-keep-open
                     aria-label="问 Packy：主色怎么选"
                     onClick={() => specQuestion("印刷主色（四色还是专色）")}
                   >
@@ -417,6 +419,7 @@ export function WorkbenchSection({ id = "workbench", showWorkspaceLink = true }:
                   <button
                     type="button"
                     className="wb-ask"
+                    data-packy-keep-open
                     aria-label="问 Packy：要不要加专色"
                     onClick={() => specQuestion("要不要加专色")}
                   >
@@ -437,6 +440,7 @@ export function WorkbenchSection({ id = "workbench", showWorkspaceLink = true }:
                   <button
                     type="button"
                     className="wb-ask"
+                    data-packy-keep-open
                     aria-label="问 Packy：亮膜还是哑膜"
                     onClick={() => specQuestion("亮膜还是哑膜")}
                   >
@@ -461,6 +465,7 @@ export function WorkbenchSection({ id = "workbench", showWorkspaceLink = true }:
                 <button
                   type="button"
                   className="wb-ask"
+                  data-packy-keep-open
                   aria-label="问 Packy：其他工艺怎么选"
                   onClick={() => specQuestion("其他工艺（烫金、击凸、触感膜…）")}
                 >
@@ -542,6 +547,7 @@ export function WorkbenchSection({ id = "workbench", showWorkspaceLink = true }:
                 <button
                   type="button"
                   className="btn wb-send"
+                  data-packy-keep-open
                   onClick={() => askPacky(formSummary())}
                   title={workbench.form.noteSendHint}
                 >

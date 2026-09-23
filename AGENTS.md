@@ -100,3 +100,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 主 Agent 应使用最少且必要的子 Agent，避免重复读取和无效分派；
 - 如果 Owner 明确要求不调用子 Agent，或任务存在不可拆分的共享写入，则由主 Agent 串行执行；
 - 不得为了节省额度降低设计核对、测试、独立验收或设计记录要求。
+
+## 对外快照机制（交给云端 AI 时）
+
+云端 AI（ChatGPT 窗口等）读不到本机目录。要把本工程或整个工作区的现状交给它时，
+先跑 `./tools/aiw-snapshot` 生成「系统快照」（写入老区 `050_交互_INTERACTION/007_云地交互与信箱/`，
+占 `L2C_` 全局流水号，不覆盖旧快照），把最新那份给它即可。机制正本在交互中心
+`…/007_云地交互与信箱/系统快照机制_v1.md`，本机同步副本 `docs/system-snapshot-mechanism.md`；
+各级 Guide 的指针说明由 `./tools/check-guides` 强制校验。快照不是事实源，
+**不放密钥、客户隐私与真实价格**。
