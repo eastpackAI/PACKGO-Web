@@ -190,6 +190,75 @@
   border-top: 1px solid var(--line);}
 .standard-home .hero {padding-top: clamp(48px, 7vw, 96px);
   padding-bottom: clamp(32px, 5vw, 64px);}
+/* ── 首屏（2026-09-24 借鉴 Cubit 的排版思路）─────────────────────────────
+   居中排版 + 只强调后半句 + 首屏卡片阵列（四类包装 + Packy 卡）。
+   目标：第一屏就把"能做什么"和"谁陪你做"讲清，且延续浅色、克制的底子。 */
+.standard-home .hero--centered .hero__lead {text-align: center;
+  max-width: 940px;
+  margin-inline: auto;}
+.standard-home .hero--centered .hero__title {display: grid;
+  gap: 4px;}
+.standard-home .hero__title-em {font-style: normal;
+  /* 强调的只是"后半句"，不让它盖过主句：比主标题略小一档、行高收紧 */
+  font-size: 0.84em;
+  line-height: 1.18;
+  background: linear-gradient(92deg, var(--accent) 0%, var(--accent-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;}
+.standard-home .hero--centered .hero__support {margin-inline: auto;
+  max-width: 44ch;}
+.standard-home .hero--centered .hero__actions {justify-content: center;}
+.standard-home .hero--centered .hero__note {margin-top: 14px;}
+.standard-home .hero__cards {display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-top: clamp(32px, 4.5vw, 56px);
+  align-items: stretch;}
+.standard-home .mini-card {display: flex;
+  flex-direction: column;
+  padding: clamp(14px, 1.4vw, 18px);}
+.standard-home .mini-card__media {position: relative;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;}
+.standard-home .mini-card__image {object-fit: cover;}
+.standard-home .mini-card__swatch {position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;}
+.standard-home .mini-card__title {font-size: 1rem;}
+.standard-home .mini-card__latin {margin-top: 2px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);}
+.standard-home .mini-card__spec {margin-top: 8px;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);}
+.standard-home .mini-card__body {margin-top: 8px;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);}
+.standard-home .mini-card__enter {margin-top: auto;
+  padding-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--accent-deep);}
+/* Packy 卡：浅色实底把它从产品卡里区分出来（对应 Cubit 的 Consultant 卡） */
+.standard-home .mini-card--packy {background: var(--bg-alt);
+  border-color: var(--line-strong);}
+.standard-home .mini-card__badge {align-self: flex-start;
+  margin-bottom: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e7f4ec;
+  color: #1d6b45;
+  font-size: 0.6875rem;}
+.standard-home .mini-card__cta {margin-top: 14px;
+  justify-content: center;}
+.standard-home .hero__wide {margin-top: clamp(28px, 4vw, 48px);}
 .standard-home .hero__inner {display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: clamp(28px, 4vw, 56px);
@@ -256,6 +325,19 @@
 .standard-home .card__body {margin-top: 12px;
   font-size: 0.9375rem;
   color: var(--ink-soft);}
+/* 规格小字：把原来的三条 tick 列表压成一行关键词，密度更高、更干净 */
+.standard-home .card__spec {margin-top: 8px;
+  font-size: 0.8125rem;
+  color: var(--accent-deep);}
+.standard-home .format-card__badge {position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink-soft);
+  font-size: 0.6875rem;
+  box-shadow: 0 6px 16px rgba(21, 22, 26, 0.12);}
 .standard-home .tick-list {margin-top: 16px;
   display: grid;
   gap: 8px;
@@ -469,17 +551,21 @@
 @media (max-width: 1080px) {
   .standard-home .grid--4 {grid-template-columns: repeat(2, minmax(0, 1fr));}
   .standard-home .platform-grid {grid-template-columns: repeat(2, minmax(0, 1fr));}
+  /* 首屏卡阵列：桌面 5 列 → 中屏 3 列 → 窄屏 2 列 → 手机 1 列 */
+  .standard-home .hero__cards {grid-template-columns: repeat(3, minmax(0, 1fr));}
 }
 @media (max-width: 900px) {
   .standard-home .site-nav, .standard-home .site-header__actions {display: none;}
   .standard-home .site-header__toggle {display: inline-flex;}
   .standard-home .hero__inner {grid-template-columns: minmax(0, 1fr);}
   .standard-home .grid--2, .standard-home .grid--3 {grid-template-columns: minmax(0, 1fr);}
+  .standard-home .hero__cards {grid-template-columns: repeat(2, minmax(0, 1fr));}
   .standard-home .showroom-general, .standard-home .about, .standard-home .site-footer__top {grid-template-columns: minmax(0, 1fr);}
   .standard-home .site-footer__columns {grid-template-columns: repeat(2, minmax(0, 1fr));}
 }
 @media (max-width: 560px) {
   .standard-home .grid--4, .standard-home .platform-grid, .standard-home .site-footer__columns {grid-template-columns: minmax(0, 1fr);}
+  .standard-home .hero__cards {grid-template-columns: minmax(0, 1fr);}
 }
 @media (prefers-reduced-motion: reduce) {
   .standard-home {scroll-behavior: auto;}

@@ -33,6 +33,13 @@ export const brand = {
     "一站式包装定制 — 软包装袋、彩盒、标签贴纸、纸袋与无纺布袋",
   support:
     "把产品知识、材料工艺、工厂能力、真实价格与生产履约组织成一个入口：客户说清楚要什么，Packy 负责把它变成可报价、可打样、可生产的一整套方案。",
+  /**
+   * 首屏副标题（一句话）。
+   * 借鉴 Cubit 首页"一段副标题只讲一件事"的写法：首屏只留这一句，
+   * 上面那段更长的 `support` 供其它区块继续使用。
+   */
+  supportShort:
+    "说清楚要什么，剩下的交给 Packy：选形态 → 定工艺 → 拿报价 → 打样 → 排产。",
   primaryCta: "和 Packy 聊聊",
   secondaryCta: "看看我们能做什么",
   stageNote: "真实工厂直连 · 从设计到量产",
@@ -281,6 +288,7 @@ export const formats = [
     latin: "Flexible Pouches",
     summary: "自立袋、平底袋、三边封、八边封；拉链、排气阀、易撕口按产品逐项确认。",
     points: ["咖啡与食品袋", "阻隔与保鲜", "拉链 / 排气阀"],
+    badge: "主推",
     accent: "#c89668",
     image: assetPath("/products/pouch.jpg"),
   },
@@ -290,6 +298,7 @@ export const formats = [
     latin: "Folding Cartons",
     summary: "单张彩盒、邮寄盒、礼盒与展示盒，结构先定，再做表面工艺。",
     points: ["单张彩盒", "邮寄盒", "礼盒 / 展示盒"],
+    badge: "结构先定",
     accent: "#8f7a5f",
     image: assetPath("/products/carton.jpg"),
   },
@@ -299,6 +308,7 @@ export const formats = [
     latin: "Labels & Stickers",
     summary: "不干胶标签、防伪标签、封口贴；材质与胶性按贴附面确认。",
     points: ["产品标签", "防伪标签", "封口贴"],
+    badge: "按贴附面确认",
     accent: "#7d8a72",
     image: assetPath("/products/labels.jpg"),
   },
@@ -308,6 +318,7 @@ export const formats = [
     latin: "Bags & Carriers",
     summary: "无纺布袋、纸袋、手提袋、麻布袋，与主包装一起成套交付。",
     points: ["无纺布袋", "纸袋 / 手提袋", "麻布袋"],
+    badge: "成套交付",
     accent: "#a98467",
     image: assetPath("/products/bags.jpg"),
   },

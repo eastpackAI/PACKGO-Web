@@ -28,15 +28,15 @@ export function FormatGrid() {
                 className="format-card__image"
               />
               <span className="format-card__swatch" style={{ background: item.accent }} aria-hidden />
+              {/* 徽标：借 Cubit 产品卡的"角标"信息位，但只写我们自己能兑现的事实 */}
+              <span className="format-card__badge">{item.badge}</span>
             </div>
             <h3 className="card__title">{item.title}</h3>
             <p className="card__latin">{item.latin}</p>
+            {/* 规格小字：原来这里是三条 tick 列表，改成一行"规格关键词"，
+                信息密度更高、卡片更干净（借鉴 Cubit 产品卡的小字规格行） */}
+            <p className="card__spec">{item.points.join(" · ")}</p>
             <p className="card__body">{item.summary}</p>
-            <ul className="tick-list">
-              {item.points.map((p) => (
-                <li key={p}>{p}</li>
-              ))}
-            </ul>
             <span className="card__enter">
               查看产品页
               <span aria-hidden>→</span>
