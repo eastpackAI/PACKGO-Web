@@ -25,7 +25,9 @@
   --shadow-card: 0 1px 2px rgba(20, 20, 20, 0.04), 0 14px 34px rgba(20, 20, 20, 0.06);
   --shadow-lift: 0 2px 4px rgba(20, 20, 20, 0.05), 0 22px 48px rgba(20, 20, 20, 0.10);
 
-  --max: 1200px;
+  /* 版心：原来 1200px，在 1080p / 1440p 上两侧空太多（Owner 反馈"左右很窄"）。
+     提到 1440px——主流 1440p 屏正好吃饱，1080p 与更窄由 padding 与断点兜底。 */
+  --max: 1440px;
   --gap: clamp(16px, 2vw, 24px);
   --section-y: clamp(56px, 8vw, 112px);
 
@@ -482,4 +484,485 @@
 @media (prefers-reduced-motion: reduce) {
   .standard-home {scroll-behavior: auto;}
   .standard-home * {transition: none !important;}
+}
+
+/* ==========================================================================
+   标准视图首页 · 总览跳转与本地工作台
+   本段由手工追加（前缀同样是 .standard-home），用于：
+   1. 首页作为总览时的站内入口（版块入口、卡片跳转、页脚链接）；
+   2. 承接网站 2 最新本地工作台（wb-*）的样式；
+   3. 工作台边界提示。
+   空间视图不受影响：所有选择器都限定在 .standard-home 之内。
+   ========================================================================== */
+
+/* 卡片/模块作为链接时的排版（<a> 默认 inline，会破坏内边距与栅格） */
+.standard-home a.card,
+.standard-home a.module,
+.standard-home a.category-item {display: block;
+  height: 100%;}
+
+/* 版块入口：眉标右侧的站内跳转 */
+.standard-home .section__action {margin-top: 16px;}
+.standard-home .section__action-link {display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+  transition: border-color 0.18s var(--ease), transform 0.18s var(--ease);}
+.standard-home .section__action-link:hover {border-color: var(--accent);
+  transform: translateY(-1px);}
+.standard-home .section__action-arrow {color: var(--accent);}
+.standard-home .section--ink .section__action-link {background: rgba(247, 245, 241, 0.06);
+  border-color: rgba(247, 245, 241, 0.28);
+  color: var(--ink-invert);}
+.standard-home .section--ink .section__action-link:hover {border-color: var(--accent-soft);}
+
+/* 卡片底部入口文案：只有真的能跳转的卡片才有这一行 */
+.standard-home .card__enter {display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent);}
+.standard-home a.card:hover .card__enter {text-decoration: underline;
+  text-underline-offset: 3px;}
+/* 卡片链接统一用纵向 flex，保证底部入口文案对齐（选择器保持与 a.card 同权重且更靠后） */
+.standard-home a.format-card--link,
+.standard-home a.industry-card--link,
+.standard-home a.pillar-card {display: flex;
+  flex-direction: column;}
+.standard-home a.format-card--link .card__enter,
+.standard-home a.industry-card--link .card__enter,
+.standard-home a.pillar-card .card__enter {margin-top: auto;
+  padding-top: 18px;}
+
+/* 平台模块作为链接时的可点提示（深色版块里用描边而不是阴影） */
+.standard-home .module--link {transition: border-color 0.18s var(--ease), transform 0.18s var(--ease);}
+.standard-home .module--link:hover {border-color: var(--accent-soft);
+  transform: translateY(-2px);}
+
+/* 品类网格：有对应产品页的可点，没有对应页面的保持静态 */
+.standard-home .category-item--link:hover {border-color: var(--accent);
+  transform: translateY(-2px);}
+.standard-home .category-item--static {color: var(--muted);
+  cursor: default;
+  background: var(--bg-alt);}
+.standard-home .category-item--static:hover {border-color: var(--line);
+  transform: none;}
+
+/* 页脚：只有能找到站内页面的文案才是链接 */
+.standard-home .site-footer__link:hover {color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;}
+
+/* ── 工作台边界（先讲清楚，再让客户开始填） ───────────────────────────── */
+.standard-home .wb-boundary-banner {margin: 0 0 18px;
+  padding: 14px 18px;
+  border: 1px solid #f0dcc0;
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  background: #fdf5e8;
+  color: #7a4d12;}
+.standard-home .wb-boundary-banner__title {font-size: 0.9375rem;
+  font-weight: 700;
+  margin: 0 0 6px;}
+.standard-home .wb-boundary-banner__list {display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 18px;
+  list-style: disc;
+  font-size: 0.875rem;
+  line-height: 1.75;}
+
+/* ── 本地工作台（承接网站 2 最新 wb-* 样式，作用域限定在 .standard-home） ── */
+.standard-home .wb-top {display: grid;
+  gap: 14px;
+  margin: 0 0 14px;}
+.standard-home .wb-id {display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;}
+.standard-home .wb-id__who {font-size: 18px;
+  font-weight: 650;}
+.standard-home .wb-id__hint {color: var(--muted);
+  font-size: 15px;}
+.standard-home .wb-stats {display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;}
+.standard-home .wb-stat {background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 2px;}
+.standard-home .wb-stat__v {font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;}
+.standard-home .wb-stat__k {color: var(--muted);
+  font-size: 14px;}
+.standard-home .wb-guest,
+.standard-home .wb-note {color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 0 0 14px;}
+.standard-home .wb-msg {border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: var(--surface);
+  padding: 10px 14px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.7;}
+.standard-home .wb-block {border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 16px 18px;
+  margin: 0 0 16px;}
+.standard-home .wb-h {margin: 0 0 10px;
+  font-size: 17px;}
+.standard-home .wb-toggle {display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 650;
+  color: var(--ink);
+  cursor: pointer;}
+.standard-home .wb-toggle__sign {color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;}
+.standard-home .wb-form {margin-top: 12px;}
+.standard-home .wb-form__hint {color: var(--muted);
+  font-size: 15px;
+  margin: 0 0 12px;}
+.standard-home .wb-grid {display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 14px;}
+.standard-home .wb-form label {display: grid;
+  gap: 6px;
+  font-size: 14.5px;
+  color: var(--ink);}
+.standard-home .wb-form label > span {color: var(--muted);
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;}
+.standard-home .wb-form input,
+.standard-home .wb-form select,
+.standard-home .wb-form textarea,
+.standard-home .wb-noterow input {width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);}
+.standard-home .wb-form input:focus,
+.standard-home .wb-form select:focus,
+.standard-home .wb-form textarea:focus,
+.standard-home .wb-noterow input:focus {outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(176 118 58 / 16%);}
+.standard-home .wb-grid--specs {margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);}
+.standard-home .wb-field {margin-top: 14px;}
+.standard-home .wb-field__label {display: block;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 6px;}
+.standard-home .wb-actions {display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 14px;}
+.standard-home .wb-link {border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14.5px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;}
+.standard-home .wb-ask {margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+  padding: 6px 15px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--accent-deep);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;}
+.standard-home .wb-ask:hover {background: #e9d7bf;}
+.standard-home .wb-ask:active {transform: translateY(1px);}
+.standard-home .wb-notearea {width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  resize: vertical;}
+.standard-home .wb-notearea:focus {outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(176 118 58 / 16%);}
+.standard-home .wb-send {border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;}
+.standard-home .wb-send:hover {background: var(--accent-soft);}
+.standard-home .wb-chips {display: flex;
+  flex-wrap: wrap;
+  gap: 8px;}
+.standard-home .wb-chip {border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;}
+.standard-home .wb-chip:hover {border-color: var(--accent);}
+.standard-home .wb-chip.is-on {border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  font-weight: 600;}
+.standard-home .wb-chip--qty {min-width: 128px;
+  text-align: center;}
+.standard-home .wb-chip--low {border-style: dashed;
+  color: #8a5a1b;}
+.standard-home .wb-chip--low.is-on {background: #fdf5e8;
+  border-color: #d8b483;}
+.standard-home .wb-fee {margin: 0 0 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fdf5e8;
+  border: 1px solid #f0dcc0;
+  color: #7a4d12;}
+.standard-home .wb-fee__t {display: block;
+  font-size: 15px;
+  margin-bottom: 6px;}
+.standard-home .wb-fee__list {margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 3px;
+  font-size: 14.5px;
+  line-height: 1.75;}
+.standard-home .wb-askline {margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 14.5px;}
+.standard-home .wb-projects {display: grid;
+  gap: 14px;}
+.standard-home .wb-project {border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;}
+.standard-home .wb-project__head {display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;}
+.standard-home .wb-project__kind {font-size: 13px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 3px 11px;
+  background: rgb(176 118 58 / 10%);
+  color: var(--accent);}
+.standard-home .wb-project__stage {font-size: 13px;
+  border-radius: 999px;
+  padding: 3px 11px;
+  background: rgb(21 128 61 / 10%);
+  color: #15803d;}
+.standard-home .wb-project__stage--soft {background: var(--bg-alt);
+  color: var(--muted);}
+.standard-home .wb-project__toggle {margin-left: auto;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--accent);
+  cursor: pointer;}
+.standard-home .wb-project__toggle:hover {background: var(--accent-soft);}
+.standard-home .wb-project__title {margin: 10px 0 6px;
+  font-size: 17px;}
+.standard-home .wb-project__meta {margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;}
+.standard-home .wb-project__body {margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);}
+.standard-home .wb-sub {margin-bottom: 16px;}
+.standard-home .wb-sub__h {margin: 0 0 8px;
+  font-size: 15px;}
+.standard-home .wb-stages {list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;}
+.standard-home .wb-stages li {display: grid;
+  gap: 2px;
+  padding-left: 12px;
+  border-left: 3px solid var(--line);}
+.standard-home .wb-stages li.is-current {border-left-color: var(--accent);}
+.standard-home .wb-stages li.is-next {border-left-color: var(--accent-soft);}
+.standard-home .wb-stages__name {font-size: 15px;
+  font-weight: 600;}
+.standard-home .wb-stages li.is-todo .wb-stages__name {color: var(--muted);
+  font-weight: 500;}
+.standard-home .wb-stages__desc {color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;}
+.standard-home .wb-blocker {margin: 0 0 4px;
+  font-size: 15px;
+  color: var(--ink);}
+.standard-home .wb-specs {display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+  margin: 0;}
+.standard-home .wb-specs > div {display: flex;
+  gap: 10px;
+  font-size: 15px;}
+.standard-home .wb-specs dt {color: var(--muted);
+  min-width: 74px;}
+.standard-home .wb-specs dd {margin: 0;
+  overflow-wrap: anywhere;}
+.standard-home .wb-timeline {list-style: none;
+  padding: 0;
+  margin: 12px 0;
+  display: grid;
+  gap: 8px;}
+.standard-home .wb-timeline li {display: flex;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.7;
+  border-left: 2px solid var(--line);
+  padding-left: 12px;}
+.standard-home .wb-timeline__at {color: var(--muted);
+  font-size: 13.5px;
+  white-space: nowrap;
+  padding-top: 2px;}
+.standard-home .wb-noterow {display: flex;
+  gap: 10px;
+  align-items: center;}
+.standard-home .wb-table {width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;}
+.standard-home .wb-h__count {margin-left: 10px;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 500;}
+.standard-home .wb-table th {text-align: left;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);}
+.standard-home .wb-table td {padding: 10px;
+  border-bottom: 1px solid var(--line);}
+.standard-home .wb-quote-state {display: inline-block;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 13px;
+  background: #fdf5e8;
+  color: #8a5a1b;}
+.standard-home .wb-artgrid {display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;}
+.standard-home .wb-art {margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;}
+.standard-home .wb-art__box {height: 110px;
+  display: grid;
+  place-items: center;
+  background: #f6f7f9;}
+.standard-home .wb-art__box img {width: 100%;
+  height: 100%;
+  object-fit: cover;}
+.standard-home .wb-art__file {color: var(--muted);
+  font-size: 14px;}
+.standard-home .wb-art figcaption {padding: 8px 10px;
+  display: grid;
+  gap: 2px;}
+.standard-home .wb-art__name {font-size: 14px;
+  overflow-wrap: anywhere;}
+.standard-home .wb-art__meta {color: var(--muted);
+  font-size: 12.5px;}
+.standard-home .wb-art--add {display: grid;
+  place-items: center;
+  gap: 6px;
+  min-height: 150px;
+  border-style: dashed;
+  color: var(--accent);
+  font-size: 14.5px;
+  cursor: pointer;}
+.standard-home .wb-art--add input {display: none;}
+.standard-home .wb-art__plus {font-size: 26px;
+  line-height: 1;}
+.standard-home .wb-empty {color: var(--muted);
+  font-size: 15px;
+  line-height: 1.9;
+  margin: 6px 0 0;}
+.standard-home .wb-chatbox {display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 16px 18px;
+  margin: 0 0 14px;}
+.standard-home .wb-chatbox p {margin: 6px 0 0;}
+.standard-home .wb-boundary {border-top: 1px dashed var(--line);
+  padding-top: 12px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;}
+
+@media (max-width: 900px) {
+  .standard-home .wb-stats,
+  .standard-home .wb-grid {grid-template-columns: repeat(2, minmax(0, 1fr));}
+  .standard-home .wb-specs {grid-template-columns: minmax(0, 1fr);}
+}
+@media (max-width: 560px) {
+  .standard-home .wb-stats,
+  .standard-home .wb-grid {grid-template-columns: minmax(0, 1fr);}
+  .standard-home .wb-noterow {flex-direction: column;
+    align-items: stretch;}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .standard-home .section__action-link:hover,
+  .standard-home .module--link:hover,
+  .standard-home .category-item--link:hover,
+  .standard-home .card:hover {transform: none;}
 }

@@ -126,6 +126,19 @@
 .app-body {
   display: flex;
   min-height: calc(100svh - 76px);
+  transition: padding-right 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Packy 完整对话打开时，页面给它让出右侧一条，而不是被盖住——
+   Owner 反馈"点出来之后点不到别的地方"。窄屏不挤（抽屉本来就占满）。 */
+.app-shell.conversation-open .app-body {
+  padding-right: min(400px, 92vw);
+}
+
+@media (max-width: 900px) {
+  .app-shell.conversation-open .app-body {
+    padding-right: 0;
+  }
 }
 
 .main-experience {

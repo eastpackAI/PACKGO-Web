@@ -94,6 +94,34 @@ function buildSpaceFocus(space: SpatialSpace, industryId: IndustryId): SpatialFo
   return getSolutionFocus(getIndustryById(industryId));
 }
 
+/** Direct URLs describe the same focus in both views. */
+function focusForRoute(
+  pathname: string,
+  industryId: IndustryId,
+  initialLobbyState: LobbyState,
+): { space: SpatialSpace; focus: SpatialFocus } {
+  if (pathname === "/workspace") {
+    return { space: "workspace", focus: getWorkspaceFocus() };
+  }
+  if (pathname === "/manufacturing") {
+    return { space: "showroom", focus: getManufacturingFocus(getIndustryById(industryId)) };
+  }
+  if (pathname.startsWith("/products/")) {
+    const productIds: Record<string, string> = {
+      flexible: "product:coffee:0",
+      carton: "product:cosmetics:0",
+      label: "product:cosmetics:1",
+      bags: "product:daily-care:0",
+    };
+    const slug = pathname.split("/")[2] ?? "";
+    const focus = getProductFocusById(productIds[slug], getIndustryById(industryId));
+    return { space: "product", focus };
+  }
+
+  const space = lobbyStateToSpace(initialLobbyState);
+  return { space, focus: buildSpaceFocus(space, industryId) };
+}
+
 /**
  * Override written by an action inside the current route.
  * 当前路由内由动作写入的共享焦点覆盖值；路由变化后自动失效，回到 URL 默认焦点。
@@ -161,6 +189,8 @@ interface ExperienceContextValue {
   draft: string;
   setDraft: (value: string) => void;
   sendMessage: () => void;
+  sendMessageText: (text: string) => void;
+  addLocalNote: (text: string) => void;
 
   actions: SpatialActions;
   /** Single entry used by config-driven UI. 配置驱动界面的统一入口。 */
@@ -187,7 +217,9 @@ export function ExperienceProvider({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [viewMode, setViewModeState] = useState<ViewMode>("spatial");
+  // The public HTML starts in Standard View so every route has readable content.
+  // An explicit saved preference still restores Spatial View after hydration.
+  const [viewMode, setViewModeState] = useState<ViewMode>("standard");
   const [mainScreenChapter, setMainScreenChapter] = useState<MainScreenChapter>("intro");
   const [packyState, setPackyState] = useState<PackyState>("open");
   const [activeJourneyStep, setActiveJourneyStep] = useState<JourneyStepId>("solution");
@@ -197,12 +229,13 @@ export function ExperienceProvider({
    * Route props stay the source of truth for the default focus of a URL.
    * 路由参数是该 URL 默认焦点的来源：直达、返回、前进都会自动回到正确空间。
    */
-  const routeKey = `${initialIndustry}:${initialLobbyState}`;
-  const routeSpace = lobbyStateToSpace(initialLobbyState);
-  const routeFocus = useMemo(
-    () => buildSpaceFocus(routeSpace, initialIndustry),
-    [initialIndustry, routeSpace],
+  const routeKey = `${pathname}:${initialIndustry}:${initialLobbyState}`;
+  const routeState = useMemo(
+    () => focusForRoute(pathname, initialIndustry, initialLobbyState),
+    [pathname, initialIndustry, initialLobbyState],
   );
+  const routeSpace = routeState.space;
+  const routeFocus = routeState.focus;
 
   const [focusOverride, setFocusOverride] = useState<FocusOverride | null>(null);
   const activeOverride = focusOverride && focusOverride.routeKey === routeKey ? focusOverride : null;
@@ -210,7 +243,7 @@ export function ExperienceProvider({
   const activeFocus = activeOverride?.focus ?? routeFocus;
   const currentSpace = activeOverride?.space ?? routeSpace;
   const previousFocus = activeOverride?.previous ?? null;
-  const selectedIndustry = activeOverride?.industryId ?? initialIndustry;
+  const selectedIndustry = activeOverride?.industryId ?? routeFocus.industryId ?? initialIndustry;
 
   const selectedObjectId = activeFocus.id;
   const activeMediaId = activeFocus.mediaId ?? null;
@@ -247,6 +280,7 @@ export function ExperienceProvider({
             messages?: ConversationMessage[];
             draft?: string;
             pinned?: boolean;
+            open?: boolean;
           };
           if (Array.isArray(parsed.messages) && parsed.messages.length > 0) {
             setMessages(parsed.messages.map(normalizeStoredMessage));
@@ -254,10 +288,11 @@ export function ExperienceProvider({
           if (typeof parsed.draft === "string") {
             setDraft(parsed.draft);
           }
-          if (parsed.pinned) {
-            setConversationPinned(true);
-            setConversationVisibility("open");
-          }
+          // 「固定」和「打开着」是两件事，分开恢复：
+          // 上次打开着就恢复打开（含换页后）——Packy 是"陪着你看"的面板，
+          // 不该因为点了别的地方/换了页面就自己消失。
+          if (parsed.pinned) setConversationPinned(true);
+          if (parsed.pinned || parsed.open) setConversationVisibility("open");
         } catch {
           window.sessionStorage.removeItem(CONVERSATION_STORAGE_KEY);
         }
@@ -275,9 +310,16 @@ export function ExperienceProvider({
     if (!sessionReady) return;
     window.sessionStorage.setItem(
       CONVERSATION_STORAGE_KEY,
-      JSON.stringify({ messages, draft, pinned: conversationPinned }),
+      // open 也要存：换页（例如点导航）会重新挂载本 Provider，
+      // 只存 pinned 会导致"打开着 Packy 点了别的地方，它就没了"。
+      JSON.stringify({
+        messages,
+        draft,
+        pinned: conversationPinned,
+        open: conversationVisibility === "open",
+      }),
     );
-  }, [conversationPinned, draft, messages, sessionReady]);
+  }, [conversationPinned, conversationVisibility, draft, messages, sessionReady]);
 
   const setViewMode = useCallback((mode: ViewMode) => {
     setViewModeState(mode);
@@ -436,8 +478,8 @@ export function ExperienceProvider({
     [conversationPinned],
   );
 
-  const sendMessage = useCallback(() => {
-    const body = draft.trim();
+  const sendMessageText = useCallback((text: string) => {
+    const body = text.trim();
     if (!body) return;
 
     const customerMessage: ConversationMessage = {
@@ -454,8 +496,24 @@ export function ExperienceProvider({
     };
 
     setMessages((current) => [...current, customerMessage, localNotice]);
+  }, []);
+
+  const addLocalNote = useCallback((text: string) => {
+    const body = text.trim();
+    if (!body) return;
+    setMessages((current) => [...current, {
+      id: nextMessageId(),
+      role: "system",
+      label: "页面操作 · 本地记录",
+      body,
+    }]);
+  }, []);
+
+  const sendMessage = useCallback(() => {
+    if (!draft.trim()) return;
+    sendMessageText(draft);
     setDraft("");
-  }, [draft]);
+  }, [draft, sendMessageText]);
 
   const actions = useMemo<SpatialActions>(
     () => ({
@@ -589,6 +647,8 @@ export function ExperienceProvider({
       draft,
       setDraft,
       sendMessage,
+      sendMessageText,
+      addLocalNote,
       actions,
       dispatchAction,
     }),
@@ -615,6 +675,8 @@ export function ExperienceProvider({
       selectedIndustry,
       selectedObjectId,
       sendMessage,
+      sendMessageText,
+      addLocalNote,
       setSelectedIndustry,
       setViewMode,
       viewMode,
