@@ -1,10 +1,13 @@
 /**
- * PACKGO 网站 2 · 内容层
+ * PACKGO 标准视图（Standard View）首页 · 内容层
  *
  * 说明：
- * - 本文件是网站 2 的**唯一内容来源**，页面组件只读这里，不在组件里散写文案。
- * - 内容口径来自已确认材料（Packy 产品基线、独立站页面方案、专项展厅信息架构、平台蓝图）。
- * - 未确认的东西一律标注「逐步开放 / 内测」，不写成已具备能力。
+ * - 本文件承接 `PACKGO-Web-2`（网站 2）最新 `content/site.ts` 的公开内容导出：
+ *   `brand`、`workbench`、`formats`、`formatCapabilities`、`packy`、`manufacturing`、
+ *   `platform`、`industries`、`generalShowroom`、`categories`、`about`、`footer`。
+ * - 页面组件只读这里，不在组件里散写文案。
+ * - 对外只讲「客户能得到什么」，不写内部机制、门禁与运行逻辑。
+ * - 网站 2 的总导航（`nav`）与独立聊天会话不承接：主站使用自己的页头与共享 Packy 会话。
  */
 
 /**
@@ -32,7 +35,7 @@ export const brand = {
     "把产品知识、材料工艺、工厂能力、真实价格与生产履约组织成一个入口：客户说清楚要什么，Packy 负责把它变成可报价、可打样、可生产的一整套方案。",
   primaryCta: "和 Packy 聊聊",
   secondaryCta: "看看我们能做什么",
-  stageNote: "内测预览版 · 尚未对外发布",
+  stageNote: "真实工厂直连 · 从设计到量产",
   /**
    * 首屏主视觉。当前为**占位素材**（AI 生成的中性包装静物，无品牌、无文字），
    * 待真实拍摄素材到位后替换；替换只改这里，不动组件。
@@ -44,13 +47,231 @@ export const brand = {
   },
 } as const;
 
-export const nav = [
-  { label: "解决方案", href: "#solutions" },
-  { label: "产品品类", href: "#categories" },
-  { label: "材料与工艺", href: "#manufacturing" },
-  { label: "平台能力", href: "#platform" },
-  { label: "关于 PACKGO", href: "#about" },
-] as const;
+/**
+ * 主要产品形态对应的独立页面。
+ *
+ * 首页只做总览：每张产品形态卡都用 `next/link` 指到这里的页面，
+ * 具体材料、结构与工艺细节在页面里讲，不再把首页卡片做成「看着能点、其实没有链接」。
+ */
+export const productRoutes = {
+  flexible: "/products/flexible",
+  carton: "/products/carton",
+  label: "/products/label",
+  bags: "/products/bags",
+} as const;
+
+export type ProductId = keyof typeof productRoutes;
+
+/** 行业展厅深链：沿用主站现有 `/solutions/<id>-packaging`（`daily-care` 保留连字符）。 */
+export const industryRoute = (id: string) => `/solutions/${id}-packaging`;
+
+/** 标准视图独立页面路由。 */
+export const pages = {
+  manufacturing: "/manufacturing",
+  platform: "/platform",
+  about: "/about",
+  workspace: "/workspace",
+} as const;
+
+/**
+ * 品类 → 主要产品形态页面。
+ * 未列出的品类（例如内托与配件）没有对应独立页面，首页按纯文本渲染，不做成可点样式。
+ */
+export const categoryRoutes: Partial<Record<string, ProductId>> = {
+  软包装袋: "flexible",
+  自立袋: "flexible",
+  平底袋: "flexible",
+  "三边封 / 八边封袋": "flexible",
+  彩盒: "carton",
+  精品盒: "carton",
+  邮寄盒: "carton",
+  展示盒: "carton",
+  不干胶标签: "label",
+  防伪标签: "label",
+  封口贴: "label",
+  纸袋: "bags",
+  手提袋: "bags",
+  无纺布袋: "bags",
+  麻布袋: "bags",
+};
+
+/**
+ * 页脚链接文案 → 站内路由。
+ * 没有对应页面的文案（例如「联系我们」）保持纯文本，不伪装成链接。
+ */
+export const footerLinkRoutes: Partial<Record<string, string>> = {
+  咖啡包装厅: "/solutions/coffee-packaging",
+  化妆品包装厅: "/solutions/cosmetics-packaging",
+  食品零食包装厅: "/solutions/food-packaging",
+  日用品包装厅: "/solutions/daily-care-packaging",
+  软包装袋: "/products/flexible",
+  彩盒与纸盒: "/products/carton",
+  "标签与贴纸": "/products/label",
+  袋类与配套: "/products/bags",
+  "关于 PACKGO": "/about",
+  真实制造能力: "/manufacturing",
+};
+
+/**
+ * 演示标注（**本工作台边界**）。
+ *
+ * 标准视图里的 Packy 工作台只是浏览器本地演示：不落库、不调用外部接口、
+ * 不构成正式报价。这一段必须在页面上显眼保留，不能只写在代码注释里。
+ */
+export const demoBoundary = {
+  title: "演示边界（请先看这一段）",
+  points: [
+    "内容仅保存在这台设备的浏览器里，没有发送给 PACKGO。",
+    "尚未接入后端：跨设备账号、图稿云端存储与工厂端协同都还没有开通。",
+    "这里的数量档与「询价记录」是本地演示记录，不是正式报价；正式报价由 PACKGO 出具。",
+  ],
+} as const;
+
+/**
+ * Packy 工作台（客户端工作台）。
+ *
+ * 这是客户自己在独立站上的空间：登记需求、上传图稿、看进度与确认记录。
+ * 它和 Owner 本机的「Packy 指挥台」（127.0.0.1:8791，看的是 Owner 自己的待办）是两件事：
+ * 一个是**客户看自己的单**，一个是**Owner 看自己要处理的活**。
+ *
+ * 边界（重要）：本页当前把客户填写的内容**存在客户自己的浏览器里**，站点还没有后端，
+ * 因此跨设备账号、图稿云端存储、工厂端协同**尚未开通**，页面必须如实标注，不能假装已通。
+ */
+export const workbench = {
+  eyebrow: "Packy 工作台",
+  title: "你的工作台：需求、图稿、进度，都在一个地方",
+  summary:
+    "不用注册也能先开始：把要做什么登记下来、把图稿传上来。做到哪一步、图稿是第几版、谁确认过，一眼看清。",
+  guestNote: "游客也能开始：先登记，之后再留下邮箱，把记录归到你名下。",
+  storageNote:
+    "说明：当前版本把你填写的内容保存在这台设备的浏览器里，换设备或清缓存会丢。跨设备账号、图稿云端存储与工厂端协同需要后端托管，尚未开通。",
+  /** 五个阶段：每个阶段都写清「到这一步在做什么、卡在哪」，客户展开项目就能看懂。 */
+  stages: [
+    { name: "需求登记", desc: "规格、材质、印刷与数量已登记，等 PACKGO 核对。" },
+    { name: "报价确认", desc: "先给初步报价看方向；工厂核对成本后给精准报价，你确认后才往下走。" },
+    { name: "打样", desc: "刀版与图稿逐项确认后出样；样品确认前不排产。" },
+    { name: "量产", desc: "材料到位、排期确认后开产，关键节点可查。" },
+    { name: "交付", desc: "按确认的交付方式发出，签收后归档规格，便于复购。" },
+  ],
+  kinds: ["软包装袋", "自立袋", "平底袋", "彩盒", "精品盒", "标签", "纸袋 / 手提袋", "其他 / 还没定"],
+  identity: {
+    guest: "未登记的游客",
+    hint: "登记后，下面的项目与图稿归到你的名下",
+    registered: "已登记",
+  },
+  form: {
+    title: "登记我的需求",
+    hint:
+      "给已经做过、清楚自己要什么的客户：把规格一次写清，报价与打样就能直接往下走。标 * 的是必填。",
+    labels: {
+      name: "称呼 *",
+      company: "公司 / 品牌",
+      email: "邮箱 *",
+      kind: "要做什么",
+      useCase: "用途",
+      dueAt: "期望交期",
+      layers: "材质层数",
+      printing: "印刷（主色）",
+      spot: "专色",
+      finishes: "其他工艺",
+      lamination: "表面处理",
+      note: "需求说明",
+    },
+    placeholders: {
+      name: "例如：王先生",
+      company: "例如：豆集咖啡",
+      email: "方便接收进度与图稿",
+      useCase: "例如：咖啡豆 250g 零售装",
+      note: "还想到什么就写在这里，例如：承重、阻隔要求、参考图、上机方式…",
+    },
+    askPacky: "不知道怎么选？直接问 Packy →",
+    askPackyShort: "问 Packy",
+    submit: "建立我的工作台",
+    reset: "清空我的工作台数据",
+    missing: "请填写称呼与邮箱。",
+    saved: "已登记。内容存在你自己的浏览器里，PACKGO 与你对接后会归到你名下。",
+    noteSend: "发送给 Packy",
+    noteSendHint: "点「发送给 Packy」＝把上面这段需求交给 Packy，继续聊下去。",
+  },
+  specs: {
+    layers: ["单层", "两层", "三层", "四层及以上", "不确定"],
+    /** 行业口径：基础色＝四色（CMYK，又称 process color）；额外颜色＝专色（Spot / Pantone）。
+        「通色 / 通用色」不是行业术语，报价单上不这么写。 */
+    printing: ["不印刷", "四色（CMYK）", "专色（单色）", "不确定"],
+    spot: ["不加专色", "1 个专色", "2 个专色", "3 个及以上", "不确定"],
+    printingHint:
+      "专色要提供 Pantone 色号（例如 871 金、877 银）；软包装的白墨打底算单独一项。",
+    finishes: ["烫金", "击凸 / 凹凸", "触感膜", "局部 UV", "压纹", "贴标 / 不干胶", "暂时不做"],
+    lamination: ["亮膜", "哑膜", "不确定"],
+  },
+  qty: {
+    title: "询价表（选数量档）",
+    feeTitle: "基础加工费",
+    feeNote: [
+      "每张订单有一笔最低加工费（基础加工费），按 5,000 个起算。",
+      "数量低于 5,000 个时，仍然按基础加工费计收。",
+      "材料与原料费按实际用量另收，不含在基础加工费里。",
+      "如果按数量算出来的加工费低于基础加工费，就按基础加工费（最低加工费）计算。",
+      "所以小批量的单价会被抬高；数量越大，单价越低。",
+    ],
+    pickHint: "选一个或多个数量档；每选一档＝提交一条询价，下面「询价记录」里就会多一行。",
+    tiers: [
+      { v: 2000, label: "2,000", low: true },
+      { v: 5000, label: "5,000" },
+      { v: 10000, label: "10,000" },
+      { v: 15000, label: "15,000" },
+      { v: 20000, label: "20,000" },
+    ],
+    lowNote: "2,000 个低于 5,000：按基础加工费计，单价会更高。",
+    askFee: "看不懂基础加工费？问 Packy",
+    recordTitle: "询价记录",
+    recordEmpty: "还没询过价。上面「询价表」里选一档，这里就会多一行。",
+    recordCols: { at: "询价时间", qty: "数量", project: "项目", state: "报价状态" },
+    recordLatest: "默认只列最近 3 条。",
+    recordMore: "展开全部",
+    recordLess: "只看近三条",
+    recordStatus: "待 PACKGO 报价",
+    recordNote: "报价由 PACKGO 出具；这里是你询过的价，出价后会写回同一行。",
+  },
+  projects: {
+    title: "我的项目",
+    empty: "还没有项目。用上面的表单登记一条，它会立刻出现在这里。",
+    next: "下一步",
+    expand: "展开",
+    collapse: "收起",
+    expandHint: "展开看：进度、卡点、报价记录、规格",
+    progressTitle: "项目进度",
+    blockerTitle: "卡点",
+    blockerNone: "当前没有卡点。",
+    blockerCommon: "常见卡点：图稿未最终确认 / 报价未确认 / 材料交期待定 —— 出现时会在这一行告诉你。",
+    specTitle: "已登记的规格",
+    quotesTitle: "报价记录",
+    noteLabel: "追加一条记录（例如：刀版改小 2mm）",
+    noteAdd: "记录",
+  },
+  artworks: {
+    title: "我的图稿",
+    empty: "还没有图稿。设计稿、刀版、参考图都可以传上来。",
+    pick: "选择文件",
+    note: "图稿暂存在你自己的浏览器里；接入后端后会上传到 PACKGO 并留版本记录。",
+    tooLarge: "单个文件超过 2MB，浏览器里存不下（接入后端后可直接上传）。",
+  },
+  chat: {
+    title: "问 Packy",
+    hint: "把现在的情况说清楚，Packy 会给下一步建议，也能直接带你去看对应品类。",
+    button: "和 Packy 聊我的工作台",
+    pin: "置顶",
+    unpin: "取消置顶",
+    pinnedNote: "已置顶：你浏览、点击和填写的内容会同步给 Packy，方便它记住你的偏好。",
+    pinHint: "置顶后，Packy 会跟着你逛整个页面，把你看过、点过、填过的记下来。",
+  },
+  steps: { title: "一次定制要经过这几步" },
+  benefits: [
+    "不用在聊天记录里翻找：进度、图稿、确认记录集中在一处",
+    "图稿有版本：每次修改留版本，避免拿错文件",
+    "复购更快：做过的规格与方案可复用，第二次下单不用从头讲",
+  ],
+} as const;
 
 /** 首页第一屏之后的四大产品形态（对应 Cubit 首页四个主形态卡片的位置）。 */
 export const formats = [
@@ -96,7 +317,7 @@ export const formats = [
 export const formatCapabilities = [
   {
     title: "AI 方案初稿",
-    note: "先给方向与结构建议，不直接当作可生产文件；上机前必须过工程确认。",
+    note: "先拿到方向与结构建议，快速看到可行方案，再进入正式打样。",
   },
   {
     title: "专属包装经理",
@@ -104,7 +325,7 @@ export const formatCapabilities = [
   },
   {
     title: "打样与工程确认",
-    note: "规格、刀版、样品、付款逐项过门禁，才进入生产。",
+    note: "规格、刀版、样品逐项确认后才进入生产，每一步都有记录可回看。",
   },
 ] as const;
 
@@ -172,7 +393,7 @@ export const manufacturing = {
       body: "关键节点留证：打样、确认、生产、检验，每一步有依据可回看。",
     },
   ],
-  footnote: "龙港产业带 · 真实工厂协同 · 能力边界如实标注「已具备 / 逐步开放」",
+  footnote: "龙港产业带 · 真实工厂协同 · 做得到的和做不到的，都当面说清楚",
   image: {
     src: assetPath("/factory/production-line.jpg"),
     alt: "包装工厂内的制袋与印刷生产线",
@@ -182,20 +403,20 @@ export const manufacturing = {
 
 /** 平台能力（对应 Cubit 的「All 7 Modules」版块）。 */
 export const platform = {
-  eyebrow: "PACKGO 平台",
-  title: "一套事实，不用反复解释",
+  eyebrow: "为什么选择 PACKGO",
+  title: "少来回、少猜测、少返工",
   summary:
-    "客户、工厂、供应商看到的是各自的视图，读的却是同一套业务事实。信息不在聊天记录里散落，也不靠人记。",
+    "包装定制最耗人的是来回确认与信息不对称。我们把该说清楚的提前说清楚，让你每一步都知道「现在到哪、接下来做什么」。",
   modules: [
-    { no: "01", title: "需求澄清", body: "把口语化的需求落成结构化规格，而不是留在聊天里。" },
-    { no: "02", title: "产品与制造模型", body: "产品、材料、工序、设备之间的对应关系可查。" },
-    { no: "03", title: "两级报价", body: "先给初步报价，再由供应商确认成本形成精准报价。" },
-    { no: "04", title: "工厂与供应商协同", body: "标准任务下达、价格与排期确认、异常上报。" },
-    { no: "05", title: "订单与生产", body: "订单由已确认报价生成，生产按工序推进。" },
-    { no: "06", title: "证据与质检", body: "关键节点留证，合格与否分开判定。" },
-    { no: "07", title: "交付与复购", body: "发货、签收、结算与下一次复购都连着同一份历史。" },
+    { no: "01", title: "需求不用讲第二遍", body: "一位专属包装经理从询价跟到量产，换人接手也不用你重新解释。" },
+    { no: "02", title: "报价有依据", body: "先给初步报价看方向，工厂确认成本后再给精准报价，钱花在哪里说得清。" },
+    { no: "03", title: "方案先看得到", body: "先给结构与方向建议，确认之后再进入打样，避免直接做错再返工。" },
+    { no: "04", title: "交期有把握", body: "排期确认后才承诺交期；遇到异常提前告知，不让你临期才发现。" },
+    { no: "05", title: "进度看得见", body: "打样、生产、质检到发货，关键节点随时可查，不用反复催问。" },
+    { no: "06", title: "质量有记录", body: "关键环节留下实物与记录，后续出现疑问可以回溯到当时的状态。" },
+    { no: "07", title: "复购更省事", body: "做过的规格与方案可以复用，第二次下单更快，也更不容易走样。" },
   ],
-  highlight: "七个环节共用同一份事实；人工确认永远保留在关键节点上。",
+  highlight: "从第一次询价到下一次复购，都有人在同一个项目里跟到底。",
 } as const;
 
 /** 行业解决方案展厅（对应 Cubit 的 Solutions for Your Industry，依 C2L_011 的信息架构）。 */
@@ -262,13 +483,13 @@ export const about = {
   eyebrow: "关于 PACKGO",
   title: "把龙港的制造能力，变成客户能用的一整套方案",
   body: [
-    "PACKGO 不是一个只放产品图的包装网站。它以龙港包装产业带的真实制造能力为基础，把产品知识、材料工艺、工厂能力、价格依据与生产履约组织起来，让客户用自己的语言就能把需求说清楚。",
-    "我们不要求客户先学会我们的分类。客户只要说「我要做什么」，Packy 负责理解、判断、带路，并把每一步落到可报价、可打样、可生产的正式记录上。",
+    "PACKGO 立足龙港包装产业带，直接对接真实工厂与产线。从软包装袋、彩盒、标签到纸袋与无纺布袋，你不需要在多个供应商之间来回对比、重复解释。",
+    "你只要说清楚「要做什么、给谁用、什么时候要」，Packy 会带你确认规格、选材料、看工艺，并把方案推进到打样与量产——过程透明、价格有依据、进度可查。",
   ],
   facts: [
     { k: "起点", v: "龙港包装产业带" },
     { k: "首个验证产品", v: "自立咖啡袋" },
-    { k: "当前阶段", v: "内测预览，未对外发布" },
+    { k: "服务范围", v: "软包装 / 彩盒 / 标签 / 袋类配套" },
   ],
 } as const;
 
@@ -283,14 +504,14 @@ export const footer = {
       links: ["软包装袋", "彩盒与纸盒", "标签与贴纸", "袋类与配套", "内托与配件"],
     },
     {
-      title: "平台",
-      links: ["需求澄清", "两级报价", "生产与质检", "证据与追溯", "复购与历史"],
+      title: "服务优势",
+      links: ["专属包装经理", "报价有依据", "打样与确认", "进度可查", "复购更省事"],
     },
     {
       title: "公司",
       links: ["关于 PACKGO", "真实制造能力", "合作与供应", "联系我们"],
     },
   ],
-  note: "本页面为内测预览，不对外发布；所有能力口径以已确认记录为准，未建成的部分标注「逐步开放」。",
-  copyright: "PACKGO · 包装定制平台（内测）",
+  note: "PACKGO · 龙港包装产业带真实制造能力 · 一站式包装定制（软包装袋 / 彩盒 / 标签 / 袋类配套）",
+  copyright: "PACKGO · 包装定制",
 } as const;

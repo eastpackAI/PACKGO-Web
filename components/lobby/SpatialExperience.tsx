@@ -2,7 +2,6 @@
 
 import { ContextModules } from "@/components/lobby/ContextModules";
 import { MainFocusView } from "@/components/lobby/MainFocusView";
-import { ConversationDrawer } from "@/components/packy/ConversationDrawer";
 import { PackyPresence } from "@/components/packy/PackyPresence";
 import { useExperience } from "@/components/providers/ExperienceProvider";
 import { getIndustryById } from "@/config/industries";
@@ -53,7 +52,6 @@ export function SpatialExperience() {
       </div>
 
       <PackyPresence />
-      <ConversationDrawer />
     </section>
   );
 }

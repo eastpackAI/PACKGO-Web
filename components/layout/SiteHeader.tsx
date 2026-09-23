@@ -13,9 +13,9 @@ export function SiteHeader() {
       </Link>
 
       <nav className="primary-nav" aria-label="主导航">
-        <Link href="/solutions/coffee-packaging">包装方案</Link>
-        <Link href="/#story">PACKGO 如何运作</Link>
-        <Link href="/solutions/cosmetics-packaging">应用行业</Link>
+        <Link href="/solutions/coffee-packaging">解决方案</Link>
+        <Link href="/products/flexible">产品品类</Link>
+        <Link href="/manufacturing">材料与制造</Link>
       </nav>
 
       <div className="header-actions">

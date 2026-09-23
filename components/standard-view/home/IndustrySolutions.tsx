@@ -1,4 +1,5 @@
-import { generalShowroom, industries } from "@/config/standardHome";
+import Link from "next/link";
+import { generalShowroom, industries, industryRoute } from "@/config/standardHome";
 import { Section } from "./Section";
 
 export function IndustrySolutions() {
@@ -11,7 +12,11 @@ export function IndustrySolutions() {
     >
       <div className="grid grid--4">
         {industries.map((ind) => (
-          <article key={ind.id} className="card industry-card">
+          <Link
+            key={ind.id}
+            className="card industry-card industry-card--link"
+            href={industryRoute(ind.id)}
+          >
             <h3 className="card__title">{ind.title}</h3>
             <p className="card__latin">{ind.latin}</p>
             <p className="card__body">{ind.summary}</p>
@@ -20,7 +25,11 @@ export function IndustrySolutions() {
                 <li key={i}>{i}</li>
               ))}
             </ul>
-          </article>
+            <span className="card__enter">
+              进入展厅
+              <span aria-hidden>→</span>
+            </span>
+          </Link>
         ))}
       </div>
 

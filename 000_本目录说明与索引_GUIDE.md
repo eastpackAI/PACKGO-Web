@@ -60,14 +60,22 @@ CI 里已加"发布前校验资源地址带子路径前缀"的门禁，**不得�
 合并进来的样式全部限定在 `.standard-home` 容器内（`styles/standard-home.css`），**空间视图零影响**。
 首页不再叠加常驻 `PackyPanel`（新首页自带 Packy 专区）。详见 `PACKGO-Web/AGENTS.md` 与 README。
 
+## 标准视图内容收口与独立页面（2026-09-23 Owner 指定）
+
+本站为双视图主站；`PACKGO-Web-2` 只作为本轮最新官网内容与视觉的只读来源，后续不在两个工程分别维护同一网站内容。
+标准视图承接网站 2 的最新首页、Packy 与本地工作台演示，并将行业、主要产品形态、制造、平台、关于与工作台组织为可直接访问的页面。
+首页继续作为总览，所有页面只使用本站的统一页头与视图切换；不叠加网站 2 的独立总导航。
+空间视图、共享路由与 Action Layer 保留；Packy 必须接同一会话，不新建第二套聊天事实。工作台仍为明确标注的浏览器本地演示，不接后端或形成正式报价。
+本轮只在本地施工、验证，不自动推送或发布。
+
 ## 当前索引
 
-- `app/`：根页面、全局布局、Metadata（页面元数据）与 `/solutions/[slug]` 静态深链路由。
+- `app/`：根页面、全局布局、Metadata（页面元数据）、行业与产品深链，以及制造、平台、关于、工作台页面。
 - `components/layout/`：`AppShell`、`SiteHeader`、`ViewModeSwitch` 与双视图统一体验入口。
 - `components/providers/`：轻量共享状态、Shared Scene / Focus Context（共享场景 / 焦点上下文）与 Action Layer（动作层）。
 - `components/lobby/`：Spatial View（空间视图）母版、Main Focus（主焦点）、Context Modules（上下文模块）、空间环境、行业快速导航与素材占位。
 - `components/packy/`：主界面 Packy、Conversation Drawer（完整对话抽屉）及 Standard View 保留的辅助面板；当前均为本地占位交互，不调用 AI API。
-- `components/standard-view/`：`StandardJourneyView`、五段内容与可点击 Journey Map（旅程导图）。
+- `components/standard-view/`：网站 2 最新首页内容、独立页面呈现、原五段旅程与可点击 Journey Map（旅程导图）。
 - `config/`：行业、主故事章节、标准旅程与 Spatial Scene（空间场景）的共享 Placeholder（占位）配置。
 - `lib/`：页面状态、共享焦点、动作与内容配置的 TypeScript 类型和轻量工具。
 - `styles/`：设计变量、基础规则、通用组件样式与独立 Spatial View 母版样式。

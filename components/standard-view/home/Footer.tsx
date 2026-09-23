@@ -1,4 +1,5 @@
-import { brand, footer } from "@/config/standardHome";
+import Link from "next/link";
+import { brand, footer, footerLinkRoutes } from "@/config/standardHome";
 
 export function Footer() {
   return (
@@ -18,9 +19,21 @@ export function Footer() {
               <div key={col.title}>
                 <h3 className="site-footer__col-title">{col.title}</h3>
                 <ul>
-                  {col.links.map((l) => (
-                    <li key={l}>{l}</li>
-                  ))}
+                  {col.links.map((l) => {
+                    const href = footerLinkRoutes[l];
+                    return (
+                      <li key={l}>
+                        {href ? (
+                          <Link className="site-footer__link" href={href}>
+                            {l}
+                          </Link>
+                        ) : (
+                          /* 没有对应站内页面的文案保持纯文本，不伪装成链接 */
+                          <span>{l}</span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}

@@ -1,4 +1,5 @@
-import { categories } from "@/config/standardHome";
+import Link from "next/link";
+import { categories, categoryRoutes, productRoutes } from "@/config/standardHome";
 import { Section } from "./Section";
 
 export function CategoryGrid() {
@@ -11,14 +12,26 @@ export function CategoryGrid() {
       tone="muted"
     >
       <ul className="category-grid">
-        {categories.map((c) => (
-          <li key={c} className="category-item">
-            <span className="category-item__name">{c}</span>
-            <span className="category-item__arrow" aria-hidden>
-              →
-            </span>
-          </li>
-        ))}
+        {categories.map((c) => {
+          const productId = categoryRoutes[c];
+          return (
+            <li key={c}>
+              {productId ? (
+                <Link className="category-item category-item--link" href={productRoutes[productId]}>
+                  <span className="category-item__name">{c}</span>
+                  <span className="category-item__arrow" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              ) : (
+                /* 没有对应独立页面的品类保持纯文本，不做成看起来能点的样式 */
+                <span className="category-item category-item--static">
+                  <span className="category-item__name">{c}</span>
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </Section>
   );

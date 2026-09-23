@@ -1,4 +1,5 @@
-import { platform } from "@/config/standardHome";
+import Link from "next/link";
+import { pages, platform } from "@/config/standardHome";
 import { Section } from "./Section";
 
 export function PlatformSection() {
@@ -9,14 +10,15 @@ export function PlatformSection() {
       title={platform.title}
       summary={platform.summary}
       tone="ink"
+      action={{ label: "查看平台页", href: pages.platform }}
     >
       <div className="grid grid--4 platform-grid">
         {platform.modules.map((m) => (
-          <article key={m.no} className="module">
+          <Link key={m.no} className="module module--link" href={pages.platform}>
             <span className="module__no">{m.no}</span>
             <h3 className="module__title">{m.title}</h3>
             <p className="module__body">{m.body}</p>
-          </article>
+          </Link>
         ))}
       </div>
       <p className="platform__highlight">{platform.highlight}</p>

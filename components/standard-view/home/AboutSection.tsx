@@ -1,9 +1,14 @@
-import { about } from "@/config/standardHome";
+import { about, pages } from "@/config/standardHome";
 import { Section } from "./Section";
 
 export function AboutSection() {
   return (
-    <Section id="about" eyebrow={about.eyebrow} title={about.title}>
+    <Section
+      id="about"
+      eyebrow={about.eyebrow}
+      title={about.title}
+      action={{ label: "查看关于页", href: pages.about }}
+    >
       <div className="about">
         <div className="about__body">
           {about.body.map((p) => (

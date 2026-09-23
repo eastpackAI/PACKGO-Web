@@ -1,0 +1,227 @@
+/* ==========================================================================
+   PACKGO 标准视图 · 独立页面样式（Standard View detail pages）
+
+   作用范围：只作用于 `.standard-detail` 容器。
+   该容器同时带 `.standard-home`，因此继续沿用首页的设计变量
+   （`styles/standard-home.css`）与通用版块样式（section / card / tick-list /
+   chip-list / capability / module / about / wide-media …）。
+
+   这里只补「独立页面」独有的版式：详情页顶部、面包屑、页面内链接卡、
+   底部返回条。空间视图（Spatial View）不引用本文件，零影响。
+   ========================================================================== */
+
+/* ---------- 详情页顶部：面包屑 + 标题 + 说明 + 主入口 ---------- */
+
+.standard-detail .detail-hero {
+  padding-top: clamp(28px, 4vw, 56px);
+  padding-bottom: clamp(28px, 4vw, 56px);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.standard-detail .detail-hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+}
+
+.standard-detail .detail-hero__inner--text {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.standard-detail .detail-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.standard-detail .detail-crumbs a {
+  color: var(--muted);
+}
+
+.standard-detail .detail-crumbs a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.standard-detail .detail-crumbs__sep {
+  margin-right: 8px;
+  color: var(--line-strong);
+}
+
+.standard-detail .detail-crumbs [aria-current] {
+  color: var(--ink-soft);
+}
+
+.standard-detail .detail-crumbs-bar {
+  padding-top: clamp(22px, 3vw, 40px);
+}
+
+.standard-detail .detail-crumbs-bar .detail-crumbs {
+  margin-bottom: 0;
+}
+
+.standard-detail .detail-hero__title {
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
+  letter-spacing: -0.025em;
+}
+
+.standard-detail .detail-hero__latin {
+  margin-top: 10px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.standard-detail .detail-hero__summary {
+  margin-top: 18px;
+  max-width: 68ch;
+  font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+  color: var(--ink-soft);
+}
+
+.standard-detail .detail-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(22px, 3vw, 32px);
+}
+
+.standard-detail .detail-hero__media {
+  margin: 0;
+}
+
+.standard-detail .detail-hero__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.standard-detail .detail-hero__media .media-note {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ---------- 页面内链接卡：把「可以往下走的地方」讲清楚 ---------- */
+
+.standard-detail .detail-links {
+  display: grid;
+  gap: var(--gap);
+}
+
+.standard-detail .detail-links--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.standard-detail .detail-links--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.standard-detail .detail-links--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.standard-detail .detail-link {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(18px, 2.1vw, 26px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+}
+
+.standard-detail .detail-link:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.standard-detail .detail-link__title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.standard-detail .detail-link__latin {
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.standard-detail .detail-link__body {
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.standard-detail .detail-link__enter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-deep);
+}
+
+/* ---------- 独立页面里的信息块 ---------- */
+
+.standard-detail .detail-panel {
+  padding: clamp(20px, 2.4vw, 28px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.standard-detail .detail-panel .tick-list {
+  margin-top: 0;
+}
+
+/* ---------- 底部返回条 ---------- */
+
+.standard-detail .detail-foot {
+  padding-block: clamp(32px, 4vw, 56px);
+  border-top: 1px solid var(--line);
+  background: var(--bg-alt);
+}
+
+.standard-detail .detail-foot__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.standard-detail .detail-foot__note {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+@media (max-width: 1080px) {
+  .standard-detail .detail-links--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .standard-detail .detail-hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .standard-detail .detail-links--2,
+  .standard-detail .detail-links--3,
+  .standard-detail .detail-links--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

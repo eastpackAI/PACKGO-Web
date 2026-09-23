@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { manufacturing } from "@/config/standardHome";
+import Link from "next/link";
+import { manufacturing, pages } from "@/config/standardHome";
 import { Section } from "./Section";
 
 export function ManufacturingSection() {
@@ -9,6 +10,7 @@ export function ManufacturingSection() {
       eyebrow={manufacturing.eyebrow}
       title={manufacturing.title}
       summary={manufacturing.summary}
+      action={{ label: "查看制造与材料页", href: pages.manufacturing }}
     >
       <figure className="wide-media">
         <Image
@@ -24,10 +26,14 @@ export function ManufacturingSection() {
 
       <div className="grid grid--4">
         {manufacturing.pillars.map((p) => (
-          <article key={p.title} className="card">
+          <Link key={p.title} className="card pillar-card" href={pages.manufacturing}>
             <h3 className="card__title">{p.title}</h3>
             <p className="card__body">{p.body}</p>
-          </article>
+            <span className="card__enter">
+              在制造页展开
+              <span aria-hidden>→</span>
+            </span>
+          </Link>
         ))}
       </div>
       <p className="footnote">{manufacturing.footnote}</p>

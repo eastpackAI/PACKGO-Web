@@ -1,5 +1,6 @@
 import { packy } from "@/config/standardHome";
 import { Section } from "./Section";
+import { PackyOpenButton } from "./StandardPackyControls";
 
 export function PackySection() {
   return (
@@ -34,12 +35,9 @@ export function PackySection() {
           <div className="bubble bubble--packy">{packy.sample.packy}</div>
 
           <div className="packy-demo__foot">
-            <div className="packy-demo__input" aria-hidden>
-              说说您要做的包装…
-            </div>
-            <span className="packy-demo__send" aria-hidden>
-              发送
-            </span>
+            {/* 真正的对话只有一套：这里只打开共享会话，不放第二套假输入框 */}
+            <PackyOpenButton className="btn btn--primary" label="打开完整对话" />
+            <span className="packy-demo__hint">对话示例仅供示意 · 真实回复在共享会话里</span>
           </div>
         </aside>
       </div>

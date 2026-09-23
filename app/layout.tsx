@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: "PACKGO · 让包装与制造清晰可见",
     template: "%s · PACKGO",
   },
-  description: "PACKGO 数字包装展厅框架预览。",
+  description: "浏览 PACKGO 的包装形态、行业方案与材料制造内容。部分页面与 Packy 功能仍为本地演示。",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

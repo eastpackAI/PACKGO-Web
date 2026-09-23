@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { formatCapabilities, formats } from "@/config/standardHome";
+import Link from "next/link";
+import { formatCapabilities, formats, productRoutes } from "@/config/standardHome";
 import { Section } from "./Section";
 
 export function FormatGrid() {
@@ -12,7 +13,12 @@ export function FormatGrid() {
     >
       <div className="grid grid--4">
         {formats.map((item) => (
-          <article key={item.id} className="card format-card">
+          <Link
+            key={item.id}
+            className="card format-card format-card--link"
+            href={productRoutes[item.id]}
+            aria-label={`${item.title}：查看产品页`}
+          >
             <div className="format-card__media">
               <Image
                 src={item.image}
@@ -31,7 +37,11 @@ export function FormatGrid() {
                 <li key={p}>{p}</li>
               ))}
             </ul>
-          </article>
+            <span className="card__enter">
+              查看产品页
+              <span aria-hidden>→</span>
+            </span>
+          </Link>
         ))}
       </div>
 
