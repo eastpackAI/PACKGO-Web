@@ -1,13 +1,21 @@
 .app-shell {
   min-height: 100svh;
-  overflow-x: hidden;
+  /* 用 `clip` 而不是 `hidden`：`overflow-x: hidden` 会把 `.app-shell` 变成滚动容器，
+     导致子元素（页头）的 `position: sticky` **失效**——表现为"页头照样被滚走"。
+     `clip` 同样裁掉横向溢出，但不会创建滚动容器，吸顶因此生效（2026-09-24 实测确认）。 */
+  overflow-x: clip;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 14rem),
     var(--color-canvas-deep);
 }
 
 .site-header {
-  position: relative;
+  /* 页头**吸顶固定**（Owner 2026-09-24 要求）：
+     之前写成 `.standard-home .site-header { position: sticky }`，但页头渲染在 `.standard-home`
+     之外（AppShell 里 SiteHeader 与内容同级），那条规则从未命中，所以滚动时页头会被带走。
+     这里改在全局生效；`.standard-home` 里那条同义规则保留（不冲突）。 */
+  position: sticky;
+  top: 0;
   z-index: var(--z-header);
   display: grid;
   /* 左右两列按 0.55 : 1.45 分配富余宽度：品牌块只需要 ~150px，
@@ -18,8 +26,10 @@
   min-height: 76px;
   padding: var(--space-3) clamp(1rem, 2vw, 2.25rem);
   border-bottom: 1px solid var(--color-line);
-  background: rgba(11, 13, 12, 0.88);
-  backdrop-filter: blur(18px);
+  /* 深色页头改为**偏冷的近黑**（原来是发暖/发绿的黑），并加一点饱和提升，
+     让它和冷中性底色配套（参考站深色端的做法： #0a0a0c 这类冷黑）。 */
+  background: rgba(9, 11, 15, 0.88);
+  backdrop-filter: saturate(140%) blur(18px);
 }
 
 .brand {
@@ -203,12 +213,59 @@
    不会再出现"点出来之后点不到别的地方"（那是当初加让位的原因）。
    注：打开时右侧约 400px 会被面板覆盖，这是浮层的预期代价；点面板外即可收起继续操作。 */
 
-/* 标准视图的外壳底色必须跟随标准视图的浅色画布（`.standard-home` 的 --bg = #faf8f4）。
-   默认的 `.app-shell` 底色是空间视图的深色画布（--color-canvas-deep）。
-   深色画布只属于空间视图，标准视图不继承它 —— 否则任何没有被内容块盖住的地方
-   （例如浮层面板上方那一列）都会露出近黑底。 */
+/* 标准视图的底色现在由**固定背景层** `.page-backdrop` 提供（见下），
+   外壳本身透明，好让固定的背景层透出来。深色画布只属于空间视图。 */
 .app-shell.view-standard {
-  background: #faf8f4;
+  background: transparent;
+}
+
+/* 内容层要在背景层之上（背景层 z-index: 0，内容 z-index: 1） */
+.app-shell.view-standard .app-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 固定背景层：底色 + 图案 + 网格（2026-09-24）────────────────────────
+   Owner 反馈两点：① 网格下面还缺"图案"这一层；② 参考站的网格**不随滚动移动**。
+   所以这里做成 `position: fixed` 的三层背景，内容在其上滚动：
+     第 1 层 底色（冷白）→ 第 2 层 极淡色块图案 + 大号水印字 → 第 3 层 32px 细网格。
+   只作用于标准视图；空间视图保持自己的底。 */
+.page-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: #f6f7f9;
+  background-image:
+    /* 图案层：三块很淡的色块（冷蓝灰为主，一处留一点品牌暖色） */
+    radial-gradient(640px 440px at 12% 6%, rgba(78, 108, 148, 0.1), transparent 62%),
+    radial-gradient(560px 400px at 88% 16%, rgba(176, 118, 58, 0.06), transparent 62%),
+    radial-gradient(720px 480px at 72% 90%, rgba(78, 108, 148, 0.07), transparent 64%),
+    /* 网格层：32px 细格（1px 线，4.5% 透明度的冷灰） */
+    linear-gradient(to right, rgba(18, 22, 28, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18, 22, 28, 0.045) 1px, transparent 1px);
+  background-size: auto, auto, auto, 32px 32px, 32px 32px;
+  background-position: center;
+}
+
+/* 水印字：极淡的大号品牌字，作为"图案层"的一部分（参考站也有一个大号淡字） */
+.page-backdrop::after {
+  content: "PACKGO";
+  position: absolute;
+  left: 50%;
+  bottom: -3vw;
+  transform: translateX(-50%);
+  color: rgba(18, 22, 28, 0.028);
+  font-weight: 700;
+  font-size: clamp(140px, 22vw, 320px);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.view-standard .page-backdrop {
+  display: block;
 }
 
 .main-experience {
@@ -1563,6 +1620,76 @@
 
 .view-spatial .primary-nav a:hover {
   color: #111114;
+}
+
+/* ── Packy 常驻入口（右下角，2026-09-24）────────────────────────────────
+   参照 Cubit 右下角的 "Chat with Cubit"：客户在任何一页都能看到并随时打开。
+   层级放在完整对话面板（40）之下；面板打开时自动隐藏，避免两层叠在一起。 */
+.packy-launcher {
+  position: fixed;
+  right: clamp(16px, 2.2vw, 28px);
+  bottom: clamp(16px, 2.2vw, 28px);
+  z-index: 35;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem 0.6rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill);
+  background: #0f1216;
+  color: var(--color-warm-white);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  box-shadow: 0 14px 32px rgba(12, 18, 26, 0.28);
+  cursor: pointer;
+  transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease,
+    opacity var(--motion-fast) ease;
+}
+
+.packy-launcher:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(12, 18, 26, 0.34);
+}
+
+.packy-launcher.is-open {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+.packy-launcher__orb {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #c89668;
+  color: #14161a;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.packy-launcher__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34c07a;
+  box-shadow: 0 0 0 3px rgba(52, 192, 122, 0.18);
+}
+
+/* 空间视图已有自己的 Packy 常驻条，这里不重复出现 */
+.view-spatial .packy-launcher {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .packy-launcher {
+    padding: 0.7rem;
+  }
+
+  .packy-launcher__label {
+    display: none;
+  }
 }
 
 .view-spatial .view-mode-switch {

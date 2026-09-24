@@ -689,19 +689,21 @@
   flex-direction: column;
   gap: 0.55rem;
   overflow: hidden;
-  border-left: 1px solid rgba(31, 95, 169, 0.34);
+  /* 2026-09-24：面板改成**冷中性玻璃**，与整站冷灰底 + 页头冷黑配套——
+     原来偏蓝的边线与偏暖的墨色让它在页面上"像贴上去的一块"。 */
+  border-left: 1px solid rgba(18, 24, 32, 0.16);
   /* 面板本身是"浅色玻璃"（下面那层近白底），所以墨色必须是深的。
      不写这一行，标题与上下文值会继承外层（空间视图）的近白墨，
      落在浅色面板上就等于白底白字 —— 2026-09-23 Owner 反馈黑条时一并暴露。 */
-  color: #1b2733;
+  color: #16202a;
   /* 半透明 + 背景模糊：面板后面的页面仍然看得见（Owner 要求） */
   background:
-    radial-gradient(circle at 12% 2%, rgba(31, 95, 169, 0.12), transparent 32%),
-    rgba(255, 255, 255, 0.82);
+    radial-gradient(circle at 12% 2%, rgba(18, 24, 32, 0.06), transparent 34%),
+    rgba(252, 253, 254, 0.86);
   backdrop-filter: blur(18px) saturate(150%);
   -webkit-backdrop-filter: blur(18px) saturate(150%);
   padding: 0.8rem;
-  box-shadow: -26px 0 60px rgba(18, 42, 71, 0.24);
+  box-shadow: -18px 0 44px rgba(10, 14, 20, 0.16), -2px 0 0 rgba(18, 24, 32, 0.04);
 }
 
 .conversation-drawer__header {

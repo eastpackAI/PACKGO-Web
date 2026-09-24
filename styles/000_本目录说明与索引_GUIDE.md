@@ -1,5 +1,42 @@
 # styles 目录说明与索引
 
+**2026-09-24（色系转冷 + 三层固定背景：底 / 图案 / 网格）**
+
+- `tokens.css`｜全局中性色由"暖灰暖白"改为**冷中性**（ink #eef0f2、canvas-deep #0a0c10、
+  line rgba(232,236,240,…)），暖色只保留为唯一强调色 `--color-accent`。
+- `components.css`｜新增 **`.page-backdrop`**：`position: fixed` 的三层背景
+  ① 冷白底色 ② 极淡色块图案（三块 radial-gradient，冷蓝灰为主 + 一处品牌暖色）与
+  大号水印字 `PACKGO`（2.8% 透明度）③ 32px 细网格（1px 线、4.5% 透明度）。
+  仅标准视图显示（`.view-standard .page-backdrop { display: block }`）。
+  `.app-shell.view-standard` 底色改为 `transparent`（底色交给背景层），
+  `.app-shell.view-standard .app-body` 提升到 `position: relative; z-index: 1` 让内容在背景之上。
+- `components.css`｜`.site-header` 深色改为**冷近黑** `rgba(9,11,15,.88)` + `saturate(140%) blur(18px)`；
+  `.packy-launcher` 底色 `#0f1216`。
+- `standard-home.css`｜**不再自己画底与网格**（原来画在滚动容器上，会随滚动移动）；
+  改为 `background: transparent`，底纹统一由固定背景层提供。
+  卡片新增**默认三层阴影**（`--shadow-card`），hover 用 `--shadow-lift`；色值同步转冷
+  （--bg #f6f7f9、--line #e3e6ea、--ink #14171b 等）。
+- `spatial-ai.css`｜Packy 抽屉改为**冷玻璃**：底 `rgba(252,253,254,.86)` + 冷灰边线 +
+  冷墨 `#16202a`，投影由偏蓝大光晕收成两层克制阴影，与整站配色融合。
+
+**2026-09-24（右下角 Packy 常驻入口）**
+
+- `components.css`｜新增 `.packy-launcher`（+ `__orb` / `__label` / `__dot`）：右下角固定胶囊按钮，
+  `z-index: 35`（在完整对话面板 40 之下）、`right/bottom: clamp(16px, 2.2vw, 28px)`；
+  面板打开时用 `.is-open` 变透明并禁止点击（保留占位，避免抖动）；≤560px 只留圆标与绿点。
+- `.view-spatial .packy-launcher { display: none }`：空间视图已有自己的 Packy 常驻条，不重复出现。
+
+**2026-09-24（页头吸顶固定）**
+
+- `tokens.css`｜新增 `html { scroll-padding-top: 88px }`：页头吸顶后，页面内锚点跳转
+  （导航点"产品品类"→ `#categories`）要留出页头高度，否则章节标题会被压在页头下面。
+- `components.css`｜`.site-header` 由 `position: relative` 改为 **`position: sticky; top: 0`**（全局生效）。
+  之前的 `position: sticky` 写在 `.standard-home .site-header` 里，而页头渲染在 `.standard-home` **之外**，
+  那条规则从未命中，所以滚动时页头会被带走。
+- `components.css`｜`.app-shell` 的 `overflow-x: hidden` 改为 **`overflow-x: clip`**：
+  `hidden` 会把外壳变成滚动容器，使页头的 `position: sticky` **失效**（实测 y 随滚动变负）；
+  `clip` 同样裁掉横向溢出，但不创建滚动容器，吸顶因此生效。
+
 **2026-09-24（首页借鉴 Cubit 的排版思路，先不换图）**
 
 - 首屏改**居中排版**：新增 `.hero--centered`（标题居中、副标题居中、按钮居中），

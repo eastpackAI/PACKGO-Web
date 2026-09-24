@@ -7,6 +7,12 @@
 
 本目录保存未来会独立变化的 React 页面组件。
 
+**2026-09-24（右下角 Packy 常驻入口）**：新增 `packy/PackyLauncher.tsx`，由 `layout/AppShell.tsx`
+渲染。要求来自 Owner：右下角要有像 Cubit "Chat with Cubit" 那样**常驻**的 Packy 入口。
+三条约束写在该组件注释里：① 打开的是**同一个**共享 Packy 会话（`openConversation`）；
+② 完整对话打开/固定时自动隐藏（`.is-open` 只改变透明度与可点性，不做卸载，避免布局跳动）；
+③ 带 `data-packy-keep-open`，不被"点面板外即收起"误关。空间视图由 CSS 隐去（那边已有 `PackyPresence`）。
+
 **2026-09-24（首页首屏重组：借 Cubit 的排版，不借它的素材）**
 
 - `standard-view/home/Hero.tsx`：首屏改为**居中排版**（标题拆两段、只有后半句用强调色）；

@@ -5,25 +5,36 @@
    注意：本文件由脚本加作用域生成；改样式请改这里，并在两种视图下截图核对。
    ========================================================================== */
 
-.standard-home {--bg: #faf8f4;
-  --bg-alt: #f2eee7;
+.standard-home {
+  /* 2026-09-24：底色由"暖米白"改为**冷中性**（对齐参考站的灰阶）；
+     同时引入"网格 + 底纹"两层背景，与卡片阴影一起形成层次（原来整站是平的）。
+     暖色不再铺大面积，只留一个强调色（--accent）。 */
+  --bg: #f6f7f9;
+  --bg-alt: #eceff2;
   --surface: #ffffff;
-  --ink: #15161a;
-  --ink-soft: #35383e;
-  --ink-invert: #f7f5f1;
-  --muted: #6d7079;
-  --line: #e5e0d6;
-  --line-strong: #d6cfc2;
+  --ink: #14171b;
+  --ink-soft: #3b4149;
+  --ink-invert: #f7f8fa;
+  --muted: #6c737d;
+  --line: #e3e6ea;
+  --line-strong: #ccd2d9;
   --accent: #b0763a;
   --accent-deep: #8d5c2b;
-  --accent-soft: #f1e3d2;
+  --accent-soft: #f0e4d6;
+
+  /* 网格层参数：细格子纸底（参考站用 background-size: var(--cell-size) 的方格做法） */
+  --grid-cell: 32px;
+  --grid-line: rgba(18, 22, 28, 0.045);
 
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
 
-  --shadow-card: 0 1px 2px rgba(20, 20, 20, 0.04), 0 14px 34px rgba(20, 20, 20, 0.06);
-  --shadow-lift: 0 2px 4px rgba(20, 20, 20, 0.05), 0 22px 48px rgba(20, 20, 20, 0.10);
+  /* 阴影改成**三层叠加**（贴边 1px + 中间扩散 + 远距投影），这是"卡片浮起来"的关键 */
+  --shadow-card: 0 1px 2px rgba(16, 20, 26, 0.05), 0 10px 24px rgba(16, 20, 26, 0.07),
+    0 30px 60px -34px rgba(16, 20, 26, 0.16);
+  --shadow-lift: 0 2px 4px rgba(16, 20, 26, 0.06), 0 18px 40px rgba(16, 20, 26, 0.11),
+    0 44px 80px -40px rgba(16, 20, 26, 0.22);
 
   /* 版心：原来 1200px，在 1080p / 1440p 上两侧空太多（Owner 反馈"左右很窄"）。
      提到 1440px——主流 1440p 屏正好吃饱，1080p 与更窄由 padding 与断点兜底。 */
@@ -40,7 +51,10 @@
 .standard-home {scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;}
 .standard-home {margin: 0;
-  background: var(--bg);
+  /* 底色 + 图案 + 网格**不在这里画**：它们由固定的 `.page-backdrop` 提供，
+     这样背景不会随页面滚动移动（Owner 2026-09-24 指出参考站的网格是钉住的）。
+     标准视图内容本身保持透明，让背景层透出来；卡片仍是白底浮在上面。 */
+  background: transparent;
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -311,10 +325,13 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: clamp(20px, 2.2vw, 28px);
+  /* 卡片**默认**就有柔和投影（不是只在 hover 才浮起来）——
+     这是"白卡浮在网格底上"的关键，页面因此有前后层次。 */
+  box-shadow: var(--shadow-card);
   transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease),
     border-color 0.2s var(--ease);}
 .standard-home .card:hover {transform: translateY(-3px);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-lift);
   border-color: var(--line-strong);}
 .standard-home .card__title {font-size: 1.125rem;}
 .standard-home .card__latin {margin-top: 4px;

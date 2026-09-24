@@ -51,6 +51,35 @@ function nextMessageId(): string {
   return `local-message-${messageSequence}`;
 }
 
+/**
+ * 从历史消息里把编号计数器接上。
+ *
+ * 修的问题（2026-09-24 本地控制台报警）：`messageSequence` 只在内存里，
+ * 刷新页面就归零；而消息是存在 `sessionStorage` 里的 —— 于是刷新之后新消息
+ * 又拿到 `local-message-1`，与历史消息撞号，React 报 "two children with the same key"，
+ * 可能导致某条消息错位或被漏画。恢复历史时取历史里的最大编号，新编号就不会再撞。
+ */
+function seedMessageSequence(messages: ConversationMessage[]): void {
+  for (const message of messages) {
+    const matched = /^local-message-(\d+)$/.exec(message?.id ?? "");
+    if (matched) messageSequence = Math.max(messageSequence, Number(matched[1]));
+  }
+}
+
+/**
+ * 去掉重复编号（同一编号只保留第一条）。
+ * 历史里已经存过重复条目时（撞号发生在修复之前），先把旧账清掉，列表键必然唯一。
+ */
+function dedupeMessages(messages: ConversationMessage[]): ConversationMessage[] {
+  const seen = new Set<string>();
+  return messages.filter((message) => {
+    const id = message?.id;
+    if (!id || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+
 function normalizeStoredMessage(message: ConversationMessage): ConversationMessage {
   if (message.role === "customer") return message;
 
@@ -283,7 +312,10 @@ export function ExperienceProvider({
             open?: boolean;
           };
           if (Array.isArray(parsed.messages) && parsed.messages.length > 0) {
-            setMessages(parsed.messages.map(normalizeStoredMessage));
+            // 先去掉重复编号，再把编号计数器接到历史最大值上（见上面两个函数的说明）。
+            const restored = dedupeMessages(parsed.messages.map(normalizeStoredMessage));
+            seedMessageSequence(restored);
+            setMessages(restored);
           }
           if (typeof parsed.draft === "string") {
             setDraft(parsed.draft);

@@ -17,19 +17,21 @@
   --radius-xl: 2rem;
   --radius-pill: 999px;
 
-  --color-ink: #eeeae2;
-  --color-muted: #a7aaa7;
-  --color-dim: #6d716f;
-  --color-canvas: #101211;
-  --color-canvas-deep: #090b0a;
-  --color-surface: rgba(31, 34, 32, 0.78);
-  --color-surface-strong: #242725;
-  --color-surface-soft: rgba(239, 235, 226, 0.06);
-  --color-line: rgba(239, 235, 226, 0.14);
-  --color-line-strong: rgba(239, 235, 226, 0.24);
+  /* 2026-09-24：中性色由"暖灰/暖白"改为**冷中性**（对齐参考站 Cubit 的灰阶做法），
+     原来偏暖、偏绿的深色与米白是"整站发暖"的主因。暖色只保留为**唯一强调色**（--color-accent）。 */
+  --color-ink: #eef0f2;
+  --color-muted: #a3a8ae;
+  --color-dim: #6b7076;
+  --color-canvas: #101317;
+  --color-canvas-deep: #0a0c10;
+  --color-surface: rgba(28, 32, 38, 0.78);
+  --color-surface-strong: #23272d;
+  --color-surface-soft: rgba(232, 236, 240, 0.06);
+  --color-line: rgba(232, 236, 240, 0.14);
+  --color-line-strong: rgba(232, 236, 240, 0.24);
   --color-accent: #c89668;
   --color-accent-soft: #e2c3a4;
-  --color-warm-white: #f3efe7;
+  --color-warm-white: #f2f4f6;
 
   --shadow-soft: 0 18px 50px rgba(0, 0, 0, 0.22);
   --shadow-stage: 0 40px 100px rgba(0, 0, 0, 0.48);
@@ -45,4 +47,10 @@
   --motion-base: 280ms;
   --motion-slow: 520ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 页头吸顶固定后，页面内锚点跳转（例如导航点"产品品类"跳 #categories）
+   需要留出页头高度，否则章节标题会被压在页头下面看不见。页头 76px + 一点余量。 */
+html {
+  scroll-padding-top: 88px;
 }
