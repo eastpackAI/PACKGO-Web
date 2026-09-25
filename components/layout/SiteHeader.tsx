@@ -26,7 +26,7 @@ export function SiteHeader() {
         <span className="brand-mark" aria-hidden="true">P</span>
         <span>
           <strong>PACKGO</strong>
-          <small>让包装与制造清晰可见</small>
+          <small>包装全案定制工作台</small>
         </span>
       </Link>
 
@@ -39,7 +39,7 @@ export function SiteHeader() {
       </nav>
 
       <div className="header-actions">
-        <span className="header-tagline">真实工厂直连 · 从设计到量产</span>
+        <span className="header-tagline">连接中国印刷城龙港制造 · 管理包装项目</span>
         <PackyOpenButton className="header-packy" label="和 Packy 聊聊" />
         <ViewModeSwitch />
         <span className="future-link" aria-disabled="true" title="当前框架阶段暂未开放">登录</span>

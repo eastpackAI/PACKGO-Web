@@ -86,6 +86,16 @@
   color: var(--ink-soft);
 }
 
+.standard-detail .detail-hero__context {
+  margin-top: 14px;
+  max-width: 68ch;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
 .standard-detail .detail-hero__actions {
   display: flex;
   flex-wrap: wrap;

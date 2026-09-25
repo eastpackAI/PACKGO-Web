@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { formatCapabilities, formats, productRoutes } from "@/config/standardHome";
 import { Section } from "./Section";
 
@@ -12,12 +13,14 @@ export function FormatGrid() {
       summary="四种最常见的包装形态；每一条都能往下走到材料、结构、工艺与真实设备。"
     >
       <div className="grid grid--4">
-        {formats.map((item) => (
+        {formats.map((item, index) => (
           <Link
             key={item.id}
             className="card format-card format-card--link"
             href={productRoutes[item.id]}
             aria-label={`${item.title}：查看产品页`}
+            data-reveal
+            style={{ "--reveal-delay": index } as CSSProperties}
           >
             <div className="format-card__media">
               <Image

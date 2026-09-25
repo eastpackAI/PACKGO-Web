@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { generalShowroom, industries, industryRoute } from "@/config/standardHome";
 import { Section } from "./Section";
 
@@ -11,11 +12,13 @@ export function IndustrySolutions() {
       summary="每个展厅都是一整套解决方案空间：主包装、外包装、标签与配套可以在同一个项目里组合，而不是让你在几个「生产线展厅」之间来回跳。"
     >
       <div className="grid grid--4">
-        {industries.map((ind) => (
+        {industries.map((ind, index) => (
           <Link
             key={ind.id}
             className="card industry-card industry-card--link"
             href={industryRoute(ind.id)}
+            data-reveal
+            style={{ "--reveal-delay": index } as CSSProperties}
           >
             <h3 className="card__title">{ind.title}</h3>
             <p className="card__latin">{ind.latin}</p>

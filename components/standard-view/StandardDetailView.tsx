@@ -157,6 +157,7 @@ function DetailShell({ crumbs, eyebrow, title, latin, summary, media, children }
             <h1 className="detail-hero__title">{title}</h1>
             {latin ? <p className="detail-hero__latin">{latin}</p> : null}
             {summary ? <p className="detail-hero__summary">{summary}</p> : null}
+            <p className="detail-hero__context">{brand.detailIntro}</p>
             <div className="detail-hero__actions">
               <PackyOpenButton className="btn btn--primary btn--lg" label={brand.primaryCta} />
               <Link className="btn btn--outline btn--lg" href="/">

@@ -52,6 +52,33 @@
   font-family: Georgia, serif;
 }
 
+/* 页头品牌（Owner 2026-09-24：品牌要更大、更有分量）。
+   只放大页头里的这一份，抽屉里的 Packy 圆标不受影响。 */
+.brand .brand-mark {
+  width: 40px;
+  height: 40px;
+  font-size: 1.15rem;
+}
+
+/* 手机宽度下页头本来就不够：品牌在这里保持改动前的字号。
+   实测 390px 视口，页头右侧（视图切换 / 登录）在改动前已超出约 26px；
+   若沿用放大后的字号会扩大到约 48px。手机页头的拥挤是既有问题，另行处理，
+   本轮不让"品牌放大"把它变得更糟。 */
+@media (max-width: 560px) {
+  /* 选择器带 .site-header：本文件后面的 .brand strong 规则不会把它压掉
+     （媒体查询本身不加权重，靠后写的普通规则会赢）。 */
+  .site-header .brand .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+  .site-header .brand strong {
+    font-size: 0.92rem;
+    letter-spacing: 0.22em;
+  }
+}
+
 .brand > span:last-child,
 .packy-header > div > span:last-child {
   display: flex;
@@ -60,14 +87,14 @@
 }
 
 .brand strong {
-  font-size: 0.92rem;
-  letter-spacing: 0.22em;
+  font-size: 1.14rem;
+  letter-spacing: 0.24em;
 }
 
 .brand small,
 .packy-header small {
   color: var(--color-muted);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
 }
 
 .primary-nav {
@@ -2331,5 +2358,43 @@
     min-height: auto;
     grid-template-columns: 1fr;
     padding: var(--space-7) 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .site-header {
+    gap: 0.5rem;
+    padding-inline: 0.65rem;
+  }
+
+  .site-header .brand {
+    gap: 0.45rem;
+  }
+
+  .site-header .brand-mark {
+    width: 31px;
+    height: 31px;
+  }
+
+  .site-header .brand strong {
+    font-size: 0.82rem;
+    letter-spacing: 0.17em;
+  }
+
+  .site-header .header-packy {
+    display: none;
+  }
+
+  .site-header .header-actions {
+    gap: 0.4rem;
+  }
+
+  .site-header .view-mode-switch {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .site-header .view-mode-switch button {
+    padding: 0.42rem 0.38rem;
+    font-size: 0.64rem;
   }
 }

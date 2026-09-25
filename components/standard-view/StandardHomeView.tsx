@@ -7,6 +7,8 @@ import { IndustrySolutions } from "./home/IndustrySolutions";
 import { ManufacturingSection } from "./home/ManufacturingSection";
 import { PackySection } from "./home/PackySection";
 import { PlatformSection } from "./home/PlatformSection";
+import { ScrollReveal } from "./home/ScrollReveal";
+import { WorkbenchFlow } from "./home/WorkbenchFlow";
 import { WorkbenchSection } from "./home/WorkbenchSection";
 
 /**
@@ -29,15 +31,17 @@ export function StandardHomeView() {
   return (
     <div className="standard-home">
       <Hero />
-      <FormatGrid />
       <PackySection />
-      <WorkbenchSection />
-      <ManufacturingSection />
       <PlatformSection />
+      <ManufacturingSection />
+      <WorkbenchFlow />
+      <WorkbenchSection />
       <IndustrySolutions />
+      <FormatGrid />
       <CategoryGrid />
       <AboutSection />
       <Footer />
+      <ScrollReveal />
     </div>
   );
 }

@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export const metadata: Metadata = {
+  icons: { icon: `${basePath}/icon.svg` },
   title: {
-    default: "PACKGO · 让包装与制造清晰可见",
+    default: "PACKGO · 连接中国印刷城龙港制造的包装项目工作台",
     template: "%s · PACKGO",
   },
-  description: "浏览 PACKGO 的包装形态、行业方案与材料制造内容。部分页面与 Packy 功能仍为本地演示。",
+  description:
+    "PACKGO 是连接中国印刷城龙港包装制造能力的包装全案定制工作台。Packy 协助梳理需求，PACKGO 对接工厂；正式订单与生产进度功能目前为演示预览。",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

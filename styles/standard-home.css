@@ -210,12 +210,40 @@
 .standard-home .hero--centered .hero__lead {text-align: center;
   max-width: 940px;
   margin-inline: auto;}
+/* 品牌行：PACKGO 单独一行、字距拉开，给品牌一点分量（Owner 2026-09-24） */
+.standard-home .hero__brand {display: inline-flex;
+  align-items: center;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: 0.36em;
+  /* 字距会在末尾多出一个字宽的空白，用 text-indent 抵消，视觉才是居中的 */
+  text-indent: 0.36em;
+  color: var(--ink);}
 .standard-home .hero--centered .hero__title {display: grid;
-  gap: 4px;}
+  gap: clamp(10px, 1.2vw, 16px);
+  justify-items: center;
+  margin-top: 14px;}
+/* 主标题（最大的一行）：包装全案定制工作台 */
+.standard-home .hero__title-role {font-size: 1.16em;
+  line-height: 1.14;
+  letter-spacing: -0.035em;}
+/* 副标题（小一档）：连接中国印刷城龙港包装制造 · 在一个工作台推进你的项目 */
+.standard-home .hero__title-sub {display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.4em;
+  font-size: 0.5em;
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: 0;}
+.standard-home .hero__title-plain {color: var(--ink-soft);}
+.standard-home .hero__title-sep {color: var(--muted);}
 .standard-home .hero__title-em {font-style: normal;
-  /* 强调的只是"后半句"，不让它盖过主句：比主标题略小一档、行高收紧 */
-  font-size: 0.84em;
-  line-height: 1.18;
+  /* 副标题里只强调后半句，字号与副标题一致，靠颜色区分 */
+  font-size: 1em;
   background: linear-gradient(92deg, var(--accent) 0%, var(--accent-deep) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -456,6 +484,9 @@
 .standard-home .footnote {margin-top: 22px;
   font-size: 0.875rem;
   color: var(--muted);}
+.standard-home .footnote--dim {margin-top: 10px;
+  font-size: 0.8125rem;
+  opacity: 0.85;}
 .standard-home .platform-grid {margin-bottom: 28px;}
 .standard-home .module {border: 1px solid rgba(247, 245, 241, 0.16);
   border-radius: var(--radius-md);
@@ -1068,4 +1099,307 @@
   .standard-home .module--link:hover,
   .standard-home .category-item--link:hover,
   .standard-home .card:hover {transform: none;}
+}
+
+/* ==========================================================================
+   滚动动效（2026-09-25｜对齐 Apple 官网的两招：逐条浮现 + 钉住演播）
+   实测来源：apple.com/macbook-pro 的 HTML/CSS/JS——① 元素标 data-staggered-item，
+   进视口加类后由 CSS 过渡；② 重点段落 position:sticky 钉住，滚动进度驱动内部变化。
+   这里用同样两招，不引入视频与 WebGL。
+   ========================================================================== */
+
+/* ── 一、逐条浮现 ────────────────────────────────────────────────────────
+   隐藏只在 .js-reveal 作用域下生效（这个类由 ScrollReveal 组件挂上），
+   脚本没跑起来时内容照常显示，不会白屏。
+   位移用 translate 而不是 transform：卡片 hover 用的是 transform，两者互不覆盖。 */
+.standard-home.js-reveal [data-reveal] {opacity: 0;
+  translate: 0 16px;
+  transition: opacity 620ms var(--ease), translate 620ms var(--ease);
+  transition-delay: calc(var(--reveal-delay, 0) * 90ms);
+  will-change: opacity, translate;}
+.standard-home.js-reveal [data-reveal].is-revealed {opacity: 1;
+  translate: 0 0;
+  /* 浮现完撤掉 will-change：苹果整页只留很少的 will-change，常驻会白占显存 */
+  will-change: auto;}
+
+/* ── 二、工作台六步：左边钉住一屏 + 跟着滚动逐步点亮 ─────────────────── */
+.standard-home .flow {display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;}
+.standard-home .flow__visual {position: sticky;
+  /* 页头吸顶 76px + 一点余量，钉住时不被页头压住 */
+  top: 104px;}
+.standard-home .flow__panel {background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: clamp(18px, 2vw, 28px);
+  box-shadow: var(--shadow-card);}
+.standard-home .flow__route {display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--muted);}
+.standard-home .flow__route i {font-style: normal;
+  color: var(--line-strong);}
+.standard-home .flow__route .is-here {color: var(--ink);
+  font-weight: 600;}
+.standard-home .flow__drawing {display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 14px;}
+.standard-home .flow-draw__frame {fill: var(--bg-alt);
+  stroke: var(--line);
+  stroke-width: 1.5;}
+.standard-home .flow-draw__input {fill: var(--line-strong);}
+.standard-home .flow-draw__gear {transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 900ms var(--ease);}
+.standard-home .flow-draw__gear circle,
+.standard-home .flow-draw__gear path {fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.5;}
+.standard-home .flow-draw__gear .flow-draw__gear-core {fill: var(--line-strong);
+  stroke: none;}
+.standard-home .flow-draw__spark {fill: var(--accent);}
+.standard-home .flow-draw__slot {fill: var(--surface);
+  stroke: var(--line-strong);
+  stroke-width: 1.25;
+  transition: fill 420ms var(--ease), stroke 420ms var(--ease);}
+.standard-home .flow-draw__slot.is-active {fill: var(--accent);
+  stroke: var(--accent-deep);}
+.standard-home .flow-draw__belt {fill: var(--line);}
+.standard-home .flow-draw__roller {fill: var(--line-strong);}
+.standard-home .flow__dots {display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  /* ol 默认会画 "1. 2. 3." 的序号，这里必须清掉，否则和标签里的 01/02 重复 */
+  list-style: none;}
+.standard-home .flow__dots li {font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  transition: background 420ms var(--ease), color 420ms var(--ease),
+    border-color 420ms var(--ease);}
+.standard-home .flow__dots li.is-active {background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ink-invert);}
+.standard-home .flow__now {display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 16px;}
+.standard-home .flow__now strong {font-size: 1.0625rem;}
+.standard-home .flow__now span {font-size: 0.8125rem;
+  color: var(--muted);}
+.standard-home .flow__bar {margin-top: 12px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;}
+.standard-home .flow__bar span {display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 520ms var(--ease);}
+.standard-home .flow__steps {display: grid;
+  gap: clamp(16px, 3vw, 32px);}
+.standard-home .flow__steps {margin: 0;
+  padding: 0;
+  list-style: none;}
+.standard-home .flow__step {display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(220px, 38vh, 340px);
+  padding: clamp(20px, 2.4vw, 32px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  opacity: 0.6;
+  transition: opacity 420ms var(--ease), border-color 420ms var(--ease),
+    box-shadow 420ms var(--ease);}
+.standard-home .flow__step.is-active {opacity: 1;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-card);}
+.standard-home .flow__step-no {font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);}
+.standard-home .flow__step-title {margin-top: 6px;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);}
+.standard-home .flow__step-actor {display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  color: var(--muted);}
+.standard-home .flow__step-body {margin-top: 10px;
+  max-width: 46ch;
+  color: var(--ink-soft);}
+
+@media (max-width: 900px) {
+  /* 窄屏没有"旁边钉住"的空间：退回普通纵向列表，只保留当前步骤高亮 */
+  .standard-home .flow {grid-template-columns: minmax(0, 1fr);}
+  .standard-home .flow__visual {position: static;}
+  .standard-home .flow__step {min-height: 0;
+    opacity: 1;}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .standard-home.js-reveal [data-reveal] {opacity: 1;
+    translate: 0 0;
+    transition: none;}
+  .standard-home .flow-draw__gear,
+  .standard-home .flow-draw__slot,
+  .standard-home .flow__bar span,
+  .standard-home .flow__dots li,
+  .standard-home .flow__step {transition: none;}
+}
+
+/* ==========================================================================
+   首屏动画：想法 → 工作台 → 工厂车间（2026-09-25，AT-000088）
+   首屏原来放一张静态占位照片；现在换成一段"自动播一遍、播完就停"的动画，
+   把网站的逻辑直接讲出来。绘制用 SVG，节奏由 HeroStory 的 5 拍定时器驱动。
+   ========================================================================== */
+.standard-home .hero-story {margin-top: clamp(18px, 2.6vw, 32px);}
+.standard-home .hero-story__stage {padding: clamp(12px, 1.6vw, 22px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);}
+.standard-home .hero-story__stage svg {display: block;
+  width: 100%;
+  height: auto;}
+.standard-home .hero-story__footer {display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;}
+.standard-home .hero-story__caption {font-size: 1rem;
+  color: var(--ink);}
+.standard-home .hero-story__replay {font: inherit;
+  font-size: 0.875rem;
+  padding: 8px 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 240ms var(--ease), color 240ms var(--ease);}
+.standard-home .hero-story__replay:hover {border-color: var(--accent);
+  color: var(--accent);}
+.standard-home .hero-story__replay:disabled {opacity: 0.55;
+  cursor: default;}
+.standard-home .hero-story__note {margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--muted);}
+
+/* 三个区、两条通道、四张卡片 */
+.standard-home .hs-frame {fill: transparent;
+  stroke: var(--line);
+  stroke-width: 1.5;
+  transition: stroke 520ms var(--ease);}
+.standard-home .hs-zone.is-on .hs-frame {stroke: var(--accent);}
+.standard-home .hs-label {fill: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;}
+.standard-home .hs-sub {fill: var(--muted);
+  font-size: 11.5px;
+  text-anchor: middle;}
+.standard-home .hs-detail {fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.25;}
+.standard-home .hs-detail-fill {fill: var(--bg-alt);
+  stroke: var(--line);
+  stroke-width: 1;}
+.standard-home .hs-dot,
+.standard-home .hs-roller {fill: var(--line-strong);}
+.standard-home .hs-chimney {fill: var(--bg-alt);
+  stroke: var(--line);
+  stroke-width: 1;}
+.standard-home .hs-input {fill: var(--line-strong);}
+.standard-home .hs-gear {transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 1000ms var(--ease);}
+.standard-home .hs-gear circle,
+.standard-home .hs-gear path {fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.6;}
+.standard-home .hs-gear .hs-gear-core {fill: var(--line-strong);
+  stroke: none;}
+.standard-home .hs-spark {fill: var(--accent);}
+.standard-home .hs-slot {fill: var(--surface);
+  stroke: var(--line-strong);
+  stroke-width: 1.25;
+  transition: fill 520ms var(--ease), stroke 520ms var(--ease);}
+.standard-home .hs-slot.is-on {fill: var(--accent);
+  stroke: var(--accent-deep);}
+.standard-home .hs-machine rect {fill: var(--surface);
+  stroke: var(--line-strong);
+  stroke-width: 1.25;
+  transition: fill 520ms var(--ease), stroke 520ms var(--ease);}
+.standard-home .hs-machine circle {fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.2;
+  transition: stroke 520ms var(--ease);}
+.standard-home .hs-machine text,
+.standard-home .hs-check text {fill: var(--muted);
+  font-size: 11.5px;
+  text-anchor: middle;
+  transition: fill 520ms var(--ease);}
+.standard-home .hs-machine.is-on rect {fill: var(--accent-soft);
+  stroke: var(--accent);}
+.standard-home .hs-machine.is-on circle {stroke: var(--accent-deep);}
+.standard-home .hs-machine.is-on text {fill: var(--accent-deep);}
+.standard-home .hs-check rect {fill: var(--surface);
+  stroke: var(--line-strong);
+  stroke-width: 1.25;
+  transition: fill 520ms var(--ease), stroke 520ms var(--ease);}
+.standard-home .hs-check.is-on rect {fill: var(--accent-soft);
+  stroke: var(--accent);}
+.standard-home .hs-check.is-on text {fill: var(--accent-deep);}
+.standard-home .hs-lane {fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 6;
+  transition: stroke 520ms var(--ease);}
+.standard-home .hs-lane.is-on {stroke: var(--accent);
+  stroke-dasharray: none;}
+.standard-home .hs-arrow {fill: var(--line-strong);}
+.standard-home .hs-lane-text {fill: var(--muted);
+  font-size: 12px;}
+.standard-home .hs-token {opacity: 0;
+  transition: transform 1000ms var(--ease), opacity 260ms ease;}
+.standard-home .hs-token.is-visible {opacity: 1;}
+.standard-home .hs-token rect {fill: var(--surface);
+  stroke: var(--accent);
+  stroke-width: 1.5;}
+.standard-home .hs-token text {fill: var(--ink);
+  font-size: 12px;
+  text-anchor: middle;}
+
+@media (max-width: 720px) {
+  /* 手机宽度下这张图整体缩小后字会看不清：允许横向滑动，保持可读尺寸。
+     手机版的专门排版（不是横向滑动）放在手机版专项里做。 */
+  .standard-home .hero-story__stage {overflow-x: auto;}
+  .standard-home .hero-story__stage svg {min-width: 900px;}
+  .standard-home .hero-story__footer {justify-content: flex-start;}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .standard-home .hs-gear,
+  .standard-home .hs-slot,
+  .standard-home .hs-machine rect,
+  .standard-home .hs-machine circle,
+  .standard-home .hs-check rect,
+  .standard-home .hs-lane,
+  .standard-home .hs-frame,
+  .standard-home .hs-token {transition: none;}
 }

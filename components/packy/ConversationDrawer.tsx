@@ -37,8 +37,26 @@ export function ConversationDrawer() {
     if (isOpen) {
       const active = document.activeElement;
       returnFocusRef.current = active instanceof HTMLElement ? active : null;
-      inputRef.current?.focus();
-      return;
+      /*
+       * 抽屉从 hidden 变成 visible 之前，浏览器不接受对该面板里输入框的 focus
+       * （实测：面板打开后输入框存在，但焦点仍留在触发按钮上）。
+       * 因此等滑入过渡结束再聚焦；超时兜底保证过渡被中断时也能聚焦。
+       */
+      const drawer = drawerRef.current;
+      let cancelled = false;
+      const focusInput = () => {
+        if (!cancelled) inputRef.current?.focus();
+      };
+      const onTransitionEnd = (event: TransitionEvent) => {
+        if (event.target === drawer) focusInput();
+      };
+      drawer?.addEventListener("transitionend", onTransitionEnd);
+      const fallback = window.setTimeout(focusInput, 600);
+      return () => {
+        cancelled = true;
+        window.clearTimeout(fallback);
+        drawer?.removeEventListener("transitionend", onTransitionEnd);
+      };
     }
 
     returnFocusRef.current?.focus();
